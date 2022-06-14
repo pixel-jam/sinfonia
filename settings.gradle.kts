@@ -7,7 +7,7 @@ pluginManagement {
     }
 }
 
-rootProject.name = "tentacles"
+rootProject.name = "sinfonia"
 for (name in listOf("Sinfonia-API", "Sinfonia-Server")) {
     val projName = name.toLowerCase(Locale.ENGLISH)
     include(projName)
