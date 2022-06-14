@@ -60,6 +60,17 @@ subprojects {
 
 }
 
+allprojects {
+    publishing {
+        repositories {
+            maven("https://repo.pixeljam.games/repository/pixel-snapshots/") {
+                name = "pixelSnapshots"
+                credentials(PasswordCredentials::class)
+            }
+        }
+    }
+}
+
 paperweight {
     serverProject.set(project(":sinfonia-server"))
 
