@@ -1,0 +1,610 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Ian=20Casta=C3=B1o?= <ianfe@martina.com.co>
+Date: Mon, 13 Jun 2022 22:49:38 -0500
+Subject: [PATCH] Added injection ecosystem
+
+
+diff --git a/build.gradle.kts b/build.gradle.kts
+index 10fa4d1478b9f1173dd4ec887cf231356fedd65d..22a27b7cb4b4bd5c75beb5711c56e72b4f851130 100644
+--- a/build.gradle.kts
++++ b/build.gradle.kts
+@@ -41,6 +41,7 @@ dependencies {
+     api("org.apache.logging.log4j:log4j-api:2.17.1")
+     api("org.slf4j:slf4j-api:1.8.0-beta4")
+     api("io.sentry:sentry:5.4.0") // Pufferfish
++    api("com.google.inject:guice:5.0.1") // Sinfonia - General injection environment
+ 
+     implementation("org.ow2.asm:asm:9.2")
+     implementation("org.ow2.asm:asm-commons:9.2")
+diff --git a/src/main/java/games/pixeljam/inject/ForwardingBinder.java b/src/main/java/games/pixeljam/inject/ForwardingBinder.java
+new file mode 100644
+index 0000000000000000000000000000000000000000..9410a45d5572e4f0d741fa489aa91d6779818bdf
+--- /dev/null
++++ b/src/main/java/games/pixeljam/inject/ForwardingBinder.java
+@@ -0,0 +1,168 @@
++package games.pixeljam.inject;
++
++import com.google.inject.*;
++import com.google.inject.binder.AnnotatedBindingBuilder;
++import com.google.inject.binder.AnnotatedConstantBindingBuilder;
++import com.google.inject.binder.LinkedBindingBuilder;
++import com.google.inject.matcher.Matcher;
++import com.google.inject.spi.*;
++import org.aopalliance.intercept.MethodInterceptor;
++import com.google.inject.Module;
++
++import java.lang.annotation.Annotation;
++import java.lang.reflect.Method;
++
++public interface ForwardingBinder extends Binder {
++
++    Binder forwardedBinder();
++
++    @Override
++    default void bindInterceptor(Matcher<? super Class<?>> classMatcher, Matcher<? super Method> methodMatcher, MethodInterceptor... interceptors) {
++        forwardedBinder().bindInterceptor(classMatcher, methodMatcher, interceptors);
++    }
++
++    @Override
++    default void bindScope(Class<? extends Annotation> annotationType, Scope scope) {
++        forwardedBinder().bindScope(annotationType, scope);
++    }
++
++    @Override
++    default <T> LinkedBindingBuilder<T> bind(Key<T> key) {
++        return forwardedBinder().bind(key);
++    }
++
++    @Override
++    default <T> AnnotatedBindingBuilder<T> bind(TypeLiteral<T> typeLiteral) {
++        return forwardedBinder().bind(typeLiteral);
++    }
++
++    @Override
++    default <T> AnnotatedBindingBuilder<T> bind(Class<T> type) {
++        return forwardedBinder().bind(type);
++    }
++
++    @Override
++    default AnnotatedConstantBindingBuilder bindConstant() {
++        return forwardedBinder().bindConstant();
++    }
++
++    @Override
++    default <T> void requestInjection(TypeLiteral<T> type, T instance) {
++        forwardedBinder().requestInjection(type, instance);
++    }
++
++    @Override
++    default void requestInjection(Object instance) {
++        forwardedBinder().requestInjection(instance);
++    }
++
++    @Override
++    default void requestStaticInjection(Class<?>... types) {
++        forwardedBinder().requestStaticInjection(types);
++    }
++
++    @Override
++    default void install(Module module) {
++        forwardedBinder().install(module);
++    }
++
++    @Override
++    default Stage currentStage() {
++        return forwardedBinder().currentStage();
++    }
++
++    @Override
++    default void addError(String message, Object... arguments) {
++        forwardedBinder().addError(message, arguments);
++    }
++
++    @Override
++    default void addError(Throwable t) {
++        forwardedBinder().addError(t);
++    }
++
++    @Override
++    default void addError(Message message) {
++        forwardedBinder().addError(message);
++    }
++
++    @Override
++    default <T> Provider<T> getProvider(Key<T> key) {
++        return forwardedBinder().getProvider(key);
++    }
++
++    @Override
++    default <T> Provider<T> getProvider(Dependency<T> dependency) {
++        return forwardedBinder().getProvider(dependency);
++    }
++
++    @Override
++    default <T> Provider<T> getProvider(Class<T> type) {
++        return forwardedBinder().getProvider(type);
++    }
++
++    @Override
++    default <T> MembersInjector<T> getMembersInjector(TypeLiteral<T> typeLiteral) {
++        return forwardedBinder().getMembersInjector(typeLiteral);
++    }
++
++    @Override
++    default <T> MembersInjector<T> getMembersInjector(Class<T> type) {
++        return forwardedBinder().getMembersInjector(type);
++    }
++
++    @Override
++    default void convertToTypes(Matcher<? super TypeLiteral<?>> typeMatcher, TypeConverter converter) {
++        forwardedBinder().convertToTypes(typeMatcher, converter);
++    }
++
++    @Override
++    default void bindListener(Matcher<? super TypeLiteral<?>> typeMatcher, TypeListener listener) {
++        forwardedBinder().bindListener(typeMatcher, listener);
++    }
++
++    @Override
++    default void bindListener(Matcher<? super Binding<?>> bindingMatcher, ProvisionListener... listeners) {
++        forwardedBinder().bindListener(bindingMatcher, listeners);
++    }
++
++    @Override
++    default Binder withSource(Object source) {
++        return forwardedBinder().withSource(source);
++    }
++
++    @Override
++    default Binder skipSources(Class... classesToSkip) {
++        return forwardedBinder().skipSources(classesToSkip);
++    }
++
++    @Override
++    default PrivateBinder newPrivateBinder() {
++        return forwardedBinder().newPrivateBinder();
++    }
++
++    @Override
++    default void requireExplicitBindings() {
++        forwardedBinder().requireExplicitBindings();
++    }
++
++    @Override
++    default void disableCircularProxies() {
++        forwardedBinder().disableCircularProxies();
++    }
++
++    @Override
++    default void requireAtInjectOnConstructors() {
++        forwardedBinder().requireAtInjectOnConstructors();
++    }
++
++    @Override
++    default void requireExactBindingAnnotations() {
++        forwardedBinder().requireExactBindingAnnotations();
++    }
++
++    @Override
++    default void scanModulesForAnnotatedMethods(ModuleAnnotatedMethodScanner scanner) {
++        forwardedBinder().scanModulesForAnnotatedMethods(scanner);
++    }
++}
+diff --git a/src/main/java/games/pixeljam/inject/ForwardingPrivateBinder.java b/src/main/java/games/pixeljam/inject/ForwardingPrivateBinder.java
+new file mode 100644
+index 0000000000000000000000000000000000000000..301ab67b5aa2a42aed6233240b618dd18c845195
+--- /dev/null
++++ b/src/main/java/games/pixeljam/inject/ForwardingPrivateBinder.java
+@@ -0,0 +1,36 @@
++package games.pixeljam.inject;
++
++import com.google.inject.Key;
++import com.google.inject.PrivateBinder;
++import com.google.inject.TypeLiteral;
++import com.google.inject.binder.AnnotatedElementBuilder;
++
++public interface ForwardingPrivateBinder extends ForwardingBinder, PrivateBinder {
++
++    PrivateBinder forwardedBinder();
++
++    @Override
++    default void expose(Key<?> key) {
++        forwardedBinder().expose(key);
++    }
++
++    @Override
++    default AnnotatedElementBuilder expose(Class<?> type) {
++        return forwardedBinder().expose(type);
++    }
++
++    @Override
++    default AnnotatedElementBuilder expose(TypeLiteral<?> type) {
++        return forwardedBinder().expose(type);
++    }
++
++    @Override
++    default PrivateBinder withSource(Object source) {
++        return forwardedBinder().withSource(source);
++    }
++
++    @Override
++    default PrivateBinder skipSources(Class... classesToSkip) {
++        return forwardedBinder().skipSources(classesToSkip);
++    }
++}
+diff --git a/src/main/java/games/pixeljam/inject/ForwardingProtectedBinder.java b/src/main/java/games/pixeljam/inject/ForwardingProtectedBinder.java
+new file mode 100644
+index 0000000000000000000000000000000000000000..82bd564e5a7fa4fde9da1777285bd5a089b0f0c6
+--- /dev/null
++++ b/src/main/java/games/pixeljam/inject/ForwardingProtectedBinder.java
+@@ -0,0 +1,24 @@
++package games.pixeljam.inject;
++
++import com.google.inject.Binder;
++
++public interface ForwardingProtectedBinder extends ProtectedBinder, ForwardingPrivateBinder {
++
++    @Override
++    ProtectedBinder forwardedBinder();
++
++    @Override
++    default Binder publicBinder() {
++        return forwardedBinder().publicBinder();
++    }
++
++    @Override
++    default ProtectedBinder withSource(Object source) {
++        return forwardedBinder().withSource(source);
++    }
++
++    @Override
++    default ProtectedBinder skipSources(Class... classesToSkip) {
++        return forwardedBinder().skipSources(classesToSkip);
++    }
++}
+diff --git a/src/main/java/games/pixeljam/inject/ProtectedBinder.java b/src/main/java/games/pixeljam/inject/ProtectedBinder.java
+new file mode 100644
+index 0000000000000000000000000000000000000000..cbd6c77b548af55c7e4f7d7460ca0d4c3235ac71
+--- /dev/null
++++ b/src/main/java/games/pixeljam/inject/ProtectedBinder.java
+@@ -0,0 +1,31 @@
++package games.pixeljam.inject;
++
++import com.google.inject.Binder;
++
++/**
++ * A {@link com.google.inject.PrivateBinder} that provides direct access to the enclosing
++ * environment through {@link #publicBinder()}. This is the same environment that you create
++ * bindings in by calling {@link #expose}, but access to the binder itself offers more flexibility.
++ *
++ * {@link ProtectedBinder}s are created by calling {@link #newProtectedBinder(Binder)}.
++ *
++ * @see ProtectedModule
++ */
++public interface ProtectedBinder extends ForwardingPrivateBinder {
++
++    Binder publicBinder();
++
++    default ProtectedBinder withSource(Object source) {
++        return new ProtectedBinderImpl(publicBinder().withSource(source),
++                forwardedBinder().withSource(source));
++    }
++
++    default ProtectedBinder skipSources(Class... classesToSkip) {
++        return new ProtectedBinderImpl(publicBinder().skipSources(classesToSkip),
++                forwardedBinder().skipSources(classesToSkip));
++    }
++
++    static ProtectedBinder newProtectedBinder(Binder parent) {
++        return new ProtectedBinderImpl(parent, parent.newPrivateBinder());
++    }
++}
+diff --git a/src/main/java/games/pixeljam/inject/ProtectedBinderImpl.java b/src/main/java/games/pixeljam/inject/ProtectedBinderImpl.java
+new file mode 100644
+index 0000000000000000000000000000000000000000..a9ed6fab18472e7258bbc50c32f58e9bbb8c9b20
+--- /dev/null
++++ b/src/main/java/games/pixeljam/inject/ProtectedBinderImpl.java
+@@ -0,0 +1,71 @@
++package games.pixeljam.inject;
++
++import com.google.inject.Binder;
++import com.google.inject.Module;
++import com.google.inject.PrivateBinder;
++
++public class ProtectedBinderImpl implements ProtectedBinder {
++
++    private static final Class[] SKIP = new Class[]{
++            ForwardingBinder.class,
++            ForwardingPrivateBinder.class,
++            ForwardingProtectedBinder.class,
++            ProtectedBinder.class,
++            ProtectedBinderImpl.class,
++            ProtectedModule.class
++    };
++
++    private final Binder global;
++    private final PrivateBinder local;
++
++    ProtectedBinderImpl(Binder global, PrivateBinder local) {
++        this.global = global.skipSources(SKIP);
++        this.local = (local instanceof ProtectedBinder ? ((ProtectedBinder) local).forwardedBinder() : local).skipSources(SKIP);
++    }
++
++    @Override
++    public PrivateBinder forwardedBinder() {
++        return local;
++    }
++
++    @Override
++    public Binder publicBinder() {
++        return global;
++    }
++
++    /**
++     * This hack is used to pass the current {@link ProtectedBinder} through Guice
++     * when installing a {@link ProtectedModule}. Guice will pass its own {@link Binder}
++     * to {@link ProtectedModule#configure(Binder)}, and we use this thread-local
++     * to get the {@link ProtectedBinder} wrapping it.
++     *
++     * We could try and implement the install process ourselves, but then we would miss out
++     * on Guice's module functionality, such as deduplication, error tracing, and so on.
++     */
++
++    private static final ThreadLocal<ProtectedBinderImpl> CURRENT = new ThreadLocal<>();
++
++    @Override
++    public void install(Module module) {
++        final ProtectedBinderImpl prev = CURRENT.get();
++        CURRENT.set(this);
++        try {
++            local.install(module);
++        } finally {
++            CURRENT.set(prev);
++        }
++    }
++
++    public static ProtectedBinder current(Binder binder) {
++        if(binder instanceof ProtectedBinder) {
++            return (ProtectedBinder) binder;
++        }
++
++        final ProtectedBinderImpl current = ProtectedBinderImpl.CURRENT.get();
++        if(current != null && current.local == binder) {
++            return current;
++        }
++
++        return null;
++    }
++}
+diff --git a/src/main/java/games/pixeljam/inject/ProtectedModule.java b/src/main/java/games/pixeljam/inject/ProtectedModule.java
+new file mode 100644
+index 0000000000000000000000000000000000000000..86d1090977ed2e594b15935dd2f9f039e41b27d9
+--- /dev/null
++++ b/src/main/java/games/pixeljam/inject/ProtectedModule.java
+@@ -0,0 +1,80 @@
++package games.pixeljam.inject;
++
++import com.google.inject.Binder;
++import com.google.inject.Module;
++
++/**
++ * A {@link Module} that uses a {@link ProtectedBinder}.
++ *
++ * This module must be installed through a {@link ProtectedBinder}, which must be created explicitly
++ * by calling {@link ProtectedBinder#newProtectedBinder(Binder)}. Attempting to install this module
++ * into a normal {@link Binder} fails with an error.
++ *
++ * Unlike {@link com.google.inject.PrivateModule}, installing this never creates a new {@link ProtectedBinder}
++ * automatically. This allows an entire tree of {@link ProtectedModule}s to share the same public binder.
++ *
++ * @see ProtectedBinder
++ */
++public abstract class ProtectedModule implements Module, ForwardingProtectedBinder {
++
++    protected void configure() {}
++
++    private final Object moduleKey;
++    private ProtectedBinder binder;
++
++    protected ProtectedModule(Object moduleKey) {
++        this.moduleKey = moduleKey;
++    }
++
++    protected ProtectedModule() {
++        this(null);
++    }
++
++    @Override
++    public int hashCode() {
++        return moduleKey != null ? moduleKey.hashCode()
++                : super.hashCode();
++    }
++
++    @Override
++    public boolean equals(Object obj) {
++        if(moduleKey != null) {
++            return obj != null &&
++                    getClass().equals(obj.getClass()) &&
++                    moduleKey.equals(((ProtectedModule) obj).moduleKey);
++        } else {
++            return super.equals(obj);
++        }
++    }
++
++    @Override
++    public final ProtectedBinder forwardedBinder() {
++        return binder();
++    }
++
++    protected final ProtectedBinder binder() {
++        if(binder == null) {
++            throw new IllegalStateException("Binder is only usable during configuration");
++        }
++        return binder;
++    }
++
++    @Override
++    public final void configure(Binder binder) {
++        final ProtectedBinder old = this.binder;
++        this.binder = ProtectedBinderImpl.current(binder);
++        try {
++            if(this.binder != null) {
++                configure();
++            } else {
++                binder.skipSources(ProtectedModule.class).addError(
++                        ProtectedModule.class.getSimpleName() +
++                                " must be installed with a " +
++                                ProtectedBinder.class.getSimpleName()
++                );
++            }
++        } finally {
++            this.binder = old;
++        }
++    }
++}
+diff --git a/src/main/java/org/bukkit/plugin/Plugin.java b/src/main/java/org/bukkit/plugin/Plugin.java
+index 34438b5362b0ba0949625d81e8371fe0d1f76fdf..1a36d310d89a0046772998e08a1181ed87b59bfb 100644
+--- a/src/main/java/org/bukkit/plugin/Plugin.java
++++ b/src/main/java/org/bukkit/plugin/Plugin.java
+@@ -3,6 +3,8 @@ package org.bukkit.plugin;
+ import java.io.File;
+ import java.io.InputStream;
+ import java.util.logging.Logger;
++
++import games.pixeljam.inject.ProtectedBinder;
+ import org.bukkit.Server;
+ import org.bukkit.command.TabExecutor;
+ import org.bukkit.configuration.file.FileConfiguration;
+@@ -205,4 +207,7 @@ public interface Plugin extends TabExecutor {
+      */
+     @NotNull
+     public String getName();
++
++    public default void configure(ProtectedBinder binder) {}
++
+ }
+diff --git a/src/main/java/org/bukkit/plugin/PluginModule.java b/src/main/java/org/bukkit/plugin/PluginModule.java
+new file mode 100644
+index 0000000000000000000000000000000000000000..aa8cd9dd7bb4f13acfc85d56a3684832e0d03e67
+--- /dev/null
++++ b/src/main/java/org/bukkit/plugin/PluginModule.java
+@@ -0,0 +1,25 @@
++package org.bukkit.plugin;
++
++import com.google.inject.Provides;
++import games.pixeljam.inject.ProtectedModule;
++
++public class PluginModule extends ProtectedModule {
++
++    private final Plugin plugin;
++
++    public PluginModule(Plugin plugin) {
++        this.plugin = plugin;
++    }
++
++    @Override
++    public void configure() {
++        bind(Plugin.class).toInstance(plugin);
++        plugin.configure(binder());
++    }
++
++    @Provides
++    PluginLogger pluginLogger(Plugin plugin) {
++        return (PluginLogger) plugin.getLogger();
++    }
++
++}
+diff --git a/src/main/java/org/bukkit/plugin/java/ModuleJavaPlugin.java b/src/main/java/org/bukkit/plugin/java/ModuleJavaPlugin.java
+new file mode 100644
+index 0000000000000000000000000000000000000000..3759e1ccf1de1ce0b0709143f8a243b273b90cd0
+--- /dev/null
++++ b/src/main/java/org/bukkit/plugin/java/ModuleJavaPlugin.java
+@@ -0,0 +1,17 @@
++package org.bukkit.plugin.java;
++
++import games.pixeljam.inject.ProtectedBinder;
++import com.google.inject.Module;
++
++public class ModuleJavaPlugin extends JavaPlugin {
++    private final Module module;
++
++    public ModuleJavaPlugin(Module module) {
++        this.module = module;
++    }
++
++    public void configure(ProtectedBinder binder) {
++        binder.install(module);
++    }
++
++}
+diff --git a/src/main/java/org/bukkit/plugin/java/PluginClassLoader.java b/src/main/java/org/bukkit/plugin/java/PluginClassLoader.java
+index 4f736a267eb4c8a3bedb2d02fb30468484b991d5..431f18d332c3f581fb717db8d03706e62076343a 100644
+--- a/src/main/java/org/bukkit/plugin/java/PluginClassLoader.java
++++ b/src/main/java/org/bukkit/plugin/java/PluginClassLoader.java
+@@ -20,6 +20,7 @@ import java.util.jar.JarEntry;
+ import java.util.jar.JarFile;
+ import java.util.jar.Manifest;
+ import java.util.logging.Level;
++import com.google.inject.Module;
+ import org.bukkit.plugin.InvalidPluginException;
+ import org.bukkit.plugin.PluginDescriptionFile;
+ import org.bukkit.plugin.SimplePluginManager;
+@@ -75,14 +76,16 @@ public final class PluginClassLoader extends URLClassLoader { // Spigot
+                 throw new InvalidPluginException("Cannot find main class `" + description.getMain() + "'", ex);
+             }
+ 
+-            Class<? extends JavaPlugin> pluginClass;
+-            try {
+-                pluginClass = jarClass.asSubclass(JavaPlugin.class);
+-            } catch (ClassCastException ex) {
+-                throw new InvalidPluginException("main class `" + description.getMain() + "' does not extend JavaPlugin", ex);
++            // Sinfonia start - Added subclass checking
++            if(JavaPlugin.class.isAssignableFrom(jarClass)) {
++                plugin = jarClass.asSubclass(JavaPlugin.class).newInstance();
++            } else if (Module.class.isAssignableFrom(jarClass)) {
++                plugin = new ModuleJavaPlugin(jarClass.asSubclass(Module.class).newInstance());
++            } else {
++                throw new InvalidPluginException("main class `" + description.getMain() + "' does not extend JavaPlugin or Module");
+             }
++            // Sinfonia end
+ 
+-            plugin = pluginClass.newInstance();
+         } catch (IllegalAccessException ex) {
+             throw new InvalidPluginException("No public constructor", ex);
+         } catch (InstantiationException ex) {
+diff --git a/src/test/java/org/bukkit/AnnotationTest.java b/src/test/java/org/bukkit/AnnotationTest.java
+index 49de298146814fdf238929e10270ac6717dd73bd..98042aead6f0aefba50f1e1d140f2604254caed0 100644
+--- a/src/test/java/org/bukkit/AnnotationTest.java
++++ b/src/test/java/org/bukkit/AnnotationTest.java
+@@ -45,6 +45,13 @@ public class AnnotationTest {
+         "org/bukkit/util/io/BukkitObjectOutputStream",
+         "org/bukkit/util/io/Wrapper",
+         "org/bukkit/plugin/java/PluginClassLoader",
++        // Sinfonia start
++        "org/bukkit/craftbukkit/CraftModule",
++        "org/bukkit/craftbukkit/ServerModule",
++        "org/bukkit/plugin/java/ModuleJavaPlugin",
++        "org/bukkit/plugin/Plugin",
++        "org/bukkit/plugin/PluginModule",
++        // Sinfonia end
+         // Generic functional interface
+         "org/bukkit/util/Consumer",
+         // Purpur start
+@@ -61,8 +68,16 @@ public class AnnotationTest {
+         "co/aikar/timings/TimingHistory$2$1$2",
+         "co/aikar/timings/TimingHistory$3",
+         "co/aikar/timings/TimingHistory$4",
+-        "co/aikar/timings/TimingHistoryEntry$1"
++        "co/aikar/timings/TimingHistoryEntry$1",
+         // Paper end
++        // PixelJam start
++        "games/pixeljam/inject/ForwardingBinder",
++        "games/pixeljam/inject/ForwardingPrivateBinder",
++        "games/pixeljam/inject/ForwardingProtectedBinder",
++        "games/pixeljam/inject/ProtectedBinder",
++        "games/pixeljam/inject/ProtectedBinderImpl",
++        "games/pixeljam/inject/ProtectedModule",
++        // PixelJam end
+     };
+ 
+     @Test

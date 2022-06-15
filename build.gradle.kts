@@ -22,8 +22,9 @@ dependencies {
     paperclip("io.papermc:paperclip:3.0.2")
 }
 
-subprojects {
+allprojects {
     apply(plugin = "java")
+    apply(plugin = "maven-publish")
 
     java {
         toolchain {
@@ -60,16 +61,6 @@ subprojects {
 
 }
 
-allprojects {
-    publishing {
-        repositories {
-            maven("https://repo.pixeljam.games/repository/pixel-snapshots/") {
-                name = "pixelSnapshots"
-                credentials(PasswordCredentials::class)
-            }
-        }
-    }
-}
 
 paperweight {
     serverProject.set(project(":sinfonia-server"))
@@ -89,6 +80,17 @@ paperweight {
 
             serverPatchDir.set(layout.projectDirectory.dir("patches/server"))
             serverOutputDir.set(layout.projectDirectory.dir("Sinfonia-Server"))
+        }
+    }
+}
+
+allprojects {
+    publishing {
+        repositories {
+            maven("https://repo.pixeljam.games/repository/pixel-snapshots/") {
+                name = "pixelSnapshots"
+                credentials(PasswordCredentials::class)
+            }
         }
     }
 }
