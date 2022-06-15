@@ -84,6 +84,21 @@ paperweight {
     }
 }
 
+tasks.generateDevelopmentBundle {
+    apiCoordinates.set("games.pixeljam.sinfonia:sinfonia-api")
+    mojangApiCoordinates.set("io.papermc.paper:paper-mojangapi")
+    libraryRepositories.set(
+        listOf(
+            "https://repo.maven.apache.org/maven2/",
+            "https://libraries.minecraft.net/",
+            "https://papermc.io/repo/repository/maven-public/",
+            "https://maven.quiltmc.org/repository/release/",
+            "https://repo.purpurmc.org/snapshots",
+            "https://repo.pixeljam.games/repository/pixel-releases/",
+        )
+    )
+}
+
 allprojects {
     publishing {
         repositories {
@@ -91,6 +106,14 @@ allprojects {
                 name = "pixelSnapshots"
                 credentials(PasswordCredentials::class)
             }
+        }
+    }
+}
+
+publishing {
+    publications.create<MavenPublication>("devBundle") {
+        artifact(tasks.generateDevelopmentBundle) {
+            artifactId = "dev-bundle"
         }
     }
 }
