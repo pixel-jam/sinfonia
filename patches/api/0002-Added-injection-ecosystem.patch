@@ -5,10 +5,10 @@ Subject: [PATCH] Added injection ecosystem
 
 
 diff --git a/build.gradle.kts b/build.gradle.kts
-index 10fa4d1478b9f1173dd4ec887cf231356fedd65d..22a27b7cb4b4bd5c75beb5711c56e72b4f851130 100644
+index e16706bc30fc3c851485fe0c68be4abdcc70e6e2..d34c8528b32b39c83197f843e8a66a7f7dca782b 100644
 --- a/build.gradle.kts
 +++ b/build.gradle.kts
-@@ -41,6 +41,7 @@ dependencies {
+@@ -42,6 +42,7 @@ dependencies {
      api("org.apache.logging.log4j:log4j-api:2.17.1")
      api("org.slf4j:slf4j-api:1.8.0-beta4")
      api("io.sentry:sentry:5.4.0") // Pufferfish
@@ -463,7 +463,7 @@ index 0000000000000000000000000000000000000000..86d1090977ed2e594b15935dd2f9f039
 +    }
 +}
 diff --git a/src/main/java/org/bukkit/plugin/Plugin.java b/src/main/java/org/bukkit/plugin/Plugin.java
-index 34438b5362b0ba0949625d81e8371fe0d1f76fdf..1a36d310d89a0046772998e08a1181ed87b59bfb 100644
+index 08aef59d8443038771704d9587e31f299e587307..a41ab4fc5c6030c1b99b103d4f0d7a023ceafb24 100644
 --- a/src/main/java/org/bukkit/plugin/Plugin.java
 +++ b/src/main/java/org/bukkit/plugin/Plugin.java
 @@ -3,6 +3,8 @@ package org.bukkit.plugin;
@@ -475,7 +475,7 @@ index 34438b5362b0ba0949625d81e8371fe0d1f76fdf..1a36d310d89a0046772998e08a1181ed
  import org.bukkit.Server;
  import org.bukkit.command.TabExecutor;
  import org.bukkit.configuration.file.FileConfiguration;
-@@ -205,4 +207,7 @@ public interface Plugin extends TabExecutor {
+@@ -212,4 +214,7 @@ public interface Plugin extends TabExecutor {
       */
      @NotNull
      public String getName();
