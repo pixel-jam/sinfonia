@@ -1,0 +1,19 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Ian=20Casta=C3=B1o?= <ianfe@martina.com.co>
+Date: Wed, 22 Jun 2022 22:40:33 -0500
+Subject: [PATCH] Replaced META-INF with package version info
+
+
+diff --git a/src/main/java/org/bukkit/craftbukkit/util/Versioning.java b/src/main/java/org/bukkit/craftbukkit/util/Versioning.java
+index dec5dc778eb99a25e9474f8f2404d26e8ba17343..1afd3ace4f7519748e627c346c94bc4d4335ab1e 100644
+--- a/src/main/java/org/bukkit/craftbukkit/util/Versioning.java
++++ b/src/main/java/org/bukkit/craftbukkit/util/Versioning.java
+@@ -11,7 +11,7 @@ public final class Versioning {
+     public static String getBukkitVersion() {
+         String result = "Unknown-Version";
+ 
+-        InputStream stream = Bukkit.class.getClassLoader().getResourceAsStream("META-INF/maven/org.purpurmc.purpur/sinfonia-api/pom.properties"); // Purpur // Sinfonia
++        InputStream stream = Bukkit.class.getClassLoader().getResourceAsStream("META-INF/maven/games.pixeljam.sinfonia/sinfonia-api/pom.properties"); // Purpur // Sinfonia
+         Properties properties = new Properties();
+ 
+         if (stream != null) {
