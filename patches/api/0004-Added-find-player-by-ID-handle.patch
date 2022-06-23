@@ -1,0 +1,50 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Ian=20Casta=C3=B1o?= <ianfe@martina.com.co>
+Date: Thu, 23 Jun 2022 11:54:23 -0500
+Subject: [PATCH] Added find player by ID handle
+
+
+diff --git a/src/main/java/org/bukkit/Server.java b/src/main/java/org/bukkit/Server.java
+index 9a5fe554d8f5f9bc530c1cf1a8b01845d5b74fab..098227acd3592442567d86fc1d88d8a837e826a4 100644
+--- a/src/main/java/org/bukkit/Server.java
++++ b/src/main/java/org/bukkit/Server.java
+@@ -555,6 +555,15 @@ public interface Server extends PluginMessageRecipient, net.kyori.adventure.audi
+     @Nullable
+     public Player getPlayerExact(@NotNull String name);
+ 
++    /**
++     * Gets the player with a previous registered custom id.
++     *
++     * @param id to retrieve
++     * @return a player object if one was found, null otherwise
++     */
++    @Nullable
++    public Player getPlayerByIdentifier(String id); // Sinfonia - Get by player id
++
+     /**
+      * Attempts to match any players with the given name, and returns a list
+      * of all possibly matches.
+diff --git a/src/main/java/org/bukkit/entity/Player.java b/src/main/java/org/bukkit/entity/Player.java
+index 0fbc571e2990cf79216359454972b80863d2f803..4eb81100113b8d4e032c0d79f2904dd492984730 100644
+--- a/src/main/java/org/bukkit/entity/Player.java
++++ b/src/main/java/org/bukkit/entity/Player.java
+@@ -2761,4 +2761,19 @@ public interface Player extends HumanEntity, Conversable, OfflinePlayer, PluginM
+      */
+     public boolean hasFlyingFallDamage();
+     // Purpur end
++
++    /**
++     * Allows to obtain player custom identifier.
++     *
++     * @return identifier retrieve
++     */
++    public String getPlayerIdentifier(); // Sinfonia - Get player by identifier
++
++    /**
++     * Allows to set player custom identifier.
++     *
++     * @param identifier to set
++     */
++    public void setDatabaseIdentifier(String identifier); // Sinfonia - Get player by identifier
++
+ }

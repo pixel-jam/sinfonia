@@ -1,0 +1,32 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Ian=20Casta=C3=B1o?= <ianfe@martina.com.co>
+Date: Thu, 23 Jun 2022 12:15:23 -0500
+Subject: [PATCH] Fixed bukkit testing
+
+
+diff --git a/src/main/java/org/bukkit/Bukkit.java b/src/main/java/org/bukkit/Bukkit.java
+index 44673fcec96a075bd02800b51318832d82b63c7e..e134887cb530f2613f61e6302a1965d0df2b0847 100644
+--- a/src/main/java/org/bukkit/Bukkit.java
++++ b/src/main/java/org/bukkit/Bukkit.java
+@@ -661,6 +661,8 @@ public final class Bukkit {
+         return server.getPlayer(name);
+     }
+ 
++    public static Player getPlayerByIdentifier(@NotNull String id) { return server.getPlayerByIdentifier(id); }
++
+     /**
+      * Gets the player with the exact given name, case insensitive.
+      *
+diff --git a/src/test/java/org/bukkit/AnnotationTest.java b/src/test/java/org/bukkit/AnnotationTest.java
+index 18dc31250de66b5d580843d7a7604cf7158df3c4..b0a11a1dc9600e726f3d5ba8f00401cd19384471 100644
+--- a/src/test/java/org/bukkit/AnnotationTest.java
++++ b/src/test/java/org/bukkit/AnnotationTest.java
+@@ -49,6 +49,8 @@ public class AnnotationTest {
+         "org/bukkit/craftbukkit/CraftModule",
+         "org/bukkit/craftbukkit/ServerModule",
+         "org/bukkit/Server",
++        "org/bukkit/entity/Player",
++        "org/bukkit/Bukkit",
+         "org/bukkit/plugin/java/ModuleJavaPlugin",
+         "org/bukkit/plugin/Plugin",
+         "org/bukkit/plugin/PluginModule",

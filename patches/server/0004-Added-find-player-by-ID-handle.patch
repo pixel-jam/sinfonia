@@ -1,0 +1,160 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Ian=20Casta=C3=B1o?= <ianfe@martina.com.co>
+Date: Thu, 23 Jun 2022 11:54:30 -0500
+Subject: [PATCH] Added find player by ID handle
+
+
+diff --git a/src/main/java/net/minecraft/server/level/ServerPlayer.java b/src/main/java/net/minecraft/server/level/ServerPlayer.java
+index 9c09e46aeea0527880e935c1e3cf1046036d5764..4f7fd65c0cffd483f87fca98feb5b61155ad7549 100644
+--- a/src/main/java/net/minecraft/server/level/ServerPlayer.java
++++ b/src/main/java/net/minecraft/server/level/ServerPlayer.java
+@@ -268,6 +268,7 @@ public class ServerPlayer extends Player {
+     public double lastEntitySpawnRadiusSquared; // Paper - optimise isOutsideRange, this field is in blocks
+     public final com.destroystokyo.paper.util.misc.PooledLinkedHashSets.PooledObjectLinkedOpenHashSet<ServerPlayer> cachedSingleHashSet; // Paper
+     public org.bukkit.event.player.PlayerQuitEvent.QuitReason quitReason = null; // Paper - there are a lot of changes to do if we change all methods leading to the event
++    private String databaseIdentifier; // Sinfonia
+ 
+     public ServerPlayer(MinecraftServer server, ServerLevel world, GameProfile profile, @Nullable ProfilePublicKey publicKey) {
+         super(world, world.getSharedSpawnPos(), world.getSharedSpawnAngle(), profile, publicKey);
+@@ -342,6 +343,17 @@ public class ServerPlayer extends Player {
+         this.cachedSingleMobDistanceMap = new com.destroystokyo.paper.util.PooledHashSets.PooledObjectLinkedOpenHashSet<>(this); // Paper
+         this.spawnInvulnerableTime = world.purpurConfig.playerSpawnInvulnerableTicks; // Purpur
+     }
++
++    // Sinfonia start - Get by database identifier
++    public String getDatabaseIdentifier() {
++        return this.databaseIdentifier;
++    }
++
++    // Sinfonia start - Get by database identifier
++    public void setDatabaseIdentifier(String databaseIdentifier) {
++        this.databaseIdentifier = databaseIdentifier;
++    }
++
+     // Paper start - Chunk priority
+     public BlockPos getPointInFront(double inFront) {
+         double rads = Math.toRadians(net.minecraft.server.MCUtil.normalizeYaw(this.yRot + 90)); // MC rotates yaw 90 for some odd reason
+@@ -458,6 +470,13 @@ public class ServerPlayer extends Player {
+         if (nbt.contains("recipeBook", 10)) {
+             this.recipeBook.fromNbt(nbt.getCompound("recipeBook"), this.server.getRecipeManager());
+         }
++
++        // Sinfonia start - Set database identifier
++        if (nbt.contains("databaseIdentifier")) {
++            this.databaseIdentifier = nbt.getString("databaseIdentifier");
++        }
++        // Sinfonia end
++
+         this.getBukkitEntity().readExtraData(nbt); // CraftBukkit
+ 
+         if (this.isSleeping()) {
+@@ -549,6 +568,7 @@ public class ServerPlayer extends Player {
+ 
+         nbt.putBoolean("Purpur.TPSBar", this.tpsBar); // Purpur
+         nbt.putBoolean("Purpur.CompassBar", this.compassBar); // Purpur
++        nbt.putString("databaseIdentifier", this.databaseIdentifier); // Sinfonia
+     }
+ 
+     // CraftBukkit start - World fallback code, either respawn location or global spawn
+diff --git a/src/main/java/net/minecraft/server/players/PlayerList.java b/src/main/java/net/minecraft/server/players/PlayerList.java
+index fecd65dc87a99a5692c59dd590b20327b1eb31c2..cb25f72857e81865ee0d0cd6e14d98603b530377 100644
+--- a/src/main/java/net/minecraft/server/players/PlayerList.java
++++ b/src/main/java/net/minecraft/server/players/PlayerList.java
+@@ -133,6 +133,7 @@ public abstract class PlayerList {
+     private static final SimpleDateFormat BAN_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd 'at' HH:mm:ss z");
+     private final MinecraftServer server;
+     public final List<ServerPlayer> players = new java.util.concurrent.CopyOnWriteArrayList(); // CraftBukkit - ArrayList -> CopyOnWriteArrayList: Iterator safety
++    private final Map<String, ServerPlayer> playersByIdentifier = Maps.newHashMap(); // Sinfonia - Players by database identifier
+     private final Map<UUID, ServerPlayer> playersByUUID = Maps.newHashMap();
+     private final UserBanList bans;
+     private final IpBanList ipBans;
+@@ -347,6 +348,14 @@ public abstract class PlayerList {
+         this.players.add(player);
+         this.playersByName.put(player.getScoreboardName().toLowerCase(java.util.Locale.ROOT), player); // Spigot
+         this.playersByUUID.put(player.getUUID(), player);
++        this.playersByIdentifier.put("", player); // Sinfonia - Find by database identifier
++
++        String oldIdentifier = player.getDatabaseIdentifier();
++        if (oldIdentifier != null && !oldIdentifier.isEmpty())  {
++            this.playersByIdentifier.put(oldIdentifier, player);
++        }
++
++
+         // this.broadcastAll(new PacketPlayOutPlayerInfo(PacketPlayOutPlayerInfo.EnumPlayerInfoAction.ADD_PLAYER, new EntityPlayer[]{entityplayer})); // CraftBukkit - replaced with loop below
+ 
+         // Paper start - correctly register player BEFORE PlayerJoinEvent, so the entity is valid and doesn't require tick delay hacks
+@@ -364,6 +373,9 @@ public abstract class PlayerList {
+         PlayerJoinEvent playerJoinEvent = new PlayerJoinEvent(bukkitPlayer, PaperAdventure.asAdventure(ichatmutablecomponent)); // Paper - Adventure
+         this.cserver.getPluginManager().callEvent(playerJoinEvent);
+ 
++        playersByIdentifier.remove(oldIdentifier);
++        playersByIdentifier.put(player.getDatabaseIdentifier(), player);
++
+         if (!player.connection.connection.isConnected()) {
+             return;
+         }
+@@ -675,6 +687,10 @@ public abstract class PlayerList {
+         ServerPlayer entityplayer1 = (ServerPlayer) this.playersByUUID.get(uuid);
+ 
+         if (entityplayer1 == entityplayer) {
++            String dbId = entityplayer.getDatabaseIdentifier();
++            if (dbId != null) {
++                this.playersByIdentifier.remove(dbId);
++            }
+             this.playersByUUID.remove(uuid);
+             // CraftBukkit start
+             // this.stats.remove(uuid);
+@@ -1573,6 +1589,11 @@ public abstract class PlayerList {
+         return (ServerPlayer) this.playersByUUID.get(uuid);
+     }
+ 
++    @Nullable
++    public ServerPlayer getPlayerByIdentifier(String id) {
++        return this.playersByIdentifier.get(id);
++    }
++
+     public boolean canBypassPlayerLimit(GameProfile profile) {
+         return false;
+     }
+diff --git a/src/main/java/org/bukkit/craftbukkit/CraftServer.java b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
+index 6572250edf376d9aa3eb419267697dc3a0d694aa..e0043b029ed0e9e5573819553ae301400e04243a 100644
+--- a/src/main/java/org/bukkit/craftbukkit/CraftServer.java
++++ b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
+@@ -368,6 +368,14 @@ public final class CraftServer implements Server {
+         datapackManager = new io.papermc.paper.datapack.PaperDatapackManager(console.getPackRepository()); // Paper
+     }
+ 
++    // Sinfonia start - Get player by identifier
++    @Override
++    public Player getPlayerByIdentifier(String id) {
++        Validate.notNull(id, "Identifier cannot be null");
++        ServerPlayer player = playerList.getPlayerByIdentifier(id);
++        return (player != null) ? player.getBukkitEntity() : null;
++    }
++
+     public boolean getCommandBlockOverride(String command) {
+         return this.overrideAllCommandBlockCommands || this.commandsConfiguration.getStringList("command-block-overrides").contains(command);
+     }
+diff --git a/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java b/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
+index a43aad1317b50b5ef42a84721f82318beccd66ea..098481b4bade0de317466deb1f7634a4230439d6 100644
+--- a/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
++++ b/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
+@@ -2872,4 +2872,18 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
+         return getHandle().flyingFallDamage;
+     }
+     // Purpur end
++
++
++    // Sinfonia start - Get player by Identifier
++    @Override
++    public String getPlayerIdentifier() {
++        return this.getHandle().getDatabaseIdentifier();
++    }
++
++    @Override
++    public void setDatabaseIdentifier(String identifier) {
++        this.getHandle().setDatabaseIdentifier(identifier);
++    }
++    // Sinfonia end
++
+ }

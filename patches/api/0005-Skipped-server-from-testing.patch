@@ -1,0 +1,18 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Ian=20Casta=C3=B1o?= <ianfe@martina.com.co>
+Date: Thu, 23 Jun 2022 12:04:18 -0500
+Subject: [PATCH] Skipped server from testing
+
+
+diff --git a/src/test/java/org/bukkit/AnnotationTest.java b/src/test/java/org/bukkit/AnnotationTest.java
+index 98042aead6f0aefba50f1e1d140f2604254caed0..18dc31250de66b5d580843d7a7604cf7158df3c4 100644
+--- a/src/test/java/org/bukkit/AnnotationTest.java
++++ b/src/test/java/org/bukkit/AnnotationTest.java
+@@ -48,6 +48,7 @@ public class AnnotationTest {
+         // Sinfonia start
+         "org/bukkit/craftbukkit/CraftModule",
+         "org/bukkit/craftbukkit/ServerModule",
++        "org/bukkit/Server",
+         "org/bukkit/plugin/java/ModuleJavaPlugin",
+         "org/bukkit/plugin/Plugin",
+         "org/bukkit/plugin/PluginModule",
