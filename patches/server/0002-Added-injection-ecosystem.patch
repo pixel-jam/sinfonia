@@ -56,7 +56,7 @@ index 0000000000000000000000000000000000000000..07779bdb75324e1c681b9a6eb056fa80
 +
 +}
 diff --git a/src/main/java/org/bukkit/craftbukkit/CraftServer.java b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
-index 0300704c6ae91913c2d27611154d36a277723ac8..6572250edf376d9aa3eb419267697dc3a0d694aa 100644
+index 8f331e230776c0a818056a49e9b85e803f6f05df..936ce98bc7edeb06a310f34c02d2e8485d5558ef 100644
 --- a/src/main/java/org/bukkit/craftbukkit/CraftServer.java
 +++ b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
 @@ -7,6 +7,9 @@ import com.google.common.collect.ImmutableList;
@@ -69,7 +69,7 @@ index 0300704c6ae91913c2d27611154d36a277723ac8..6572250edf376d9aa3eb419267697dc3
  import com.mojang.authlib.GameProfile;
  import com.mojang.brigadier.StringReader;
  import com.mojang.brigadier.exceptions.CommandSyntaxException;
-@@ -281,6 +284,8 @@ public final class CraftServer implements Server {
+@@ -283,6 +286,8 @@ public final class CraftServer implements Server {
      private final io.papermc.paper.logging.SysoutCatcher sysoutCatcher = new io.papermc.paper.logging.SysoutCatcher(); // Paper
      private final CraftPotionBrewer potionBrewer = new CraftPotionBrewer(); // Paper
  
@@ -78,7 +78,7 @@ index 0300704c6ae91913c2d27611154d36a277723ac8..6572250edf376d9aa3eb419267697dc3
      static {
          ConfigurationSerialization.registerClass(CraftOfflinePlayer.class);
          ConfigurationSerialization.registerClass(CraftPlayerProfile.class);
-@@ -410,6 +415,8 @@ public final class CraftServer implements Server {
+@@ -417,6 +422,8 @@ public final class CraftServer implements Server {
                  pluginFolder.mkdirs();
              }
              Plugin[] plugins = this.pluginManager.loadPlugins(pluginFolder, this.extraPluginJars());
