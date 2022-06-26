@@ -56,7 +56,7 @@ index 0000000000000000000000000000000000000000..07779bdb75324e1c681b9a6eb056fa80
 +
 +}
 diff --git a/src/main/java/org/bukkit/craftbukkit/CraftServer.java b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
-index 8f331e230776c0a818056a49e9b85e803f6f05df..936ce98bc7edeb06a310f34c02d2e8485d5558ef 100644
+index b42d145f3ab9b91cbd1fa7b7772769ed93f8e54f..d2e7d4ed0106003644a102e3fe0abeed15b3f7cc 100644
 --- a/src/main/java/org/bukkit/craftbukkit/CraftServer.java
 +++ b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
 @@ -7,6 +7,9 @@ import com.google.common.collect.ImmutableList;
@@ -78,7 +78,7 @@ index 8f331e230776c0a818056a49e9b85e803f6f05df..936ce98bc7edeb06a310f34c02d2e848
      static {
          ConfigurationSerialization.registerClass(CraftOfflinePlayer.class);
          ConfigurationSerialization.registerClass(CraftPlayerProfile.class);
-@@ -417,6 +422,8 @@ public final class CraftServer implements Server {
+@@ -418,6 +423,8 @@ public final class CraftServer implements Server {
                  pluginFolder.mkdirs();
              }
              Plugin[] plugins = this.pluginManager.loadPlugins(pluginFolder, this.extraPluginJars());
