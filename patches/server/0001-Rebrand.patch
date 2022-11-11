@@ -15,7 +15,7 @@ index 00d128eba3e778927bc33b71c1145051a0c142f5..693720c9fe82a4aae95c3a9b36897e0f
 -    implementation(project(":purpur-api")) // Purpur
 +    implementation(project(":sinfonia-api")) // Purpur // Sinfonia
      // Pufferfish start
-     implementation("io.papermc.paper:paper-mojangapi:1.19-R0.1-SNAPSHOT") {
+     implementation("io.papermc.paper:paper-mojangapi:1.19.2-R0.1-SNAPSHOT") {
          exclude("io.papermc.paper", "paper-api")
 @@ -87,7 +87,7 @@ tasks.jar {
          attributes(
