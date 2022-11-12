@@ -1,17 +1,17 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
-From: =?UTF-8?q?Ian=20Casta=C3=B1o?= <ianfe@martina.com.co>
-Date: Mon, 13 Jun 2022 22:49:53 -0500
-Subject: [PATCH] Added injection ecosystem
+From: TomateDeveloper <ianfe@martina.com.co>
+Date: Fri, 11 Nov 2022 19:50:46 -0500
+Subject: [PATCH] Add injection ecosystem
 
 
 diff --git a/src/main/java/org/bukkit/craftbukkit/CraftModule.java b/src/main/java/org/bukkit/craftbukkit/CraftModule.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..07779bdb75324e1c681b9a6eb056fa8002ace0cb
+index 0000000000000000000000000000000000000000..f2cbece579e6531c3512de06a887801b23289972
 --- /dev/null
 +++ b/src/main/java/org/bukkit/craftbukkit/CraftModule.java
-@@ -0,0 +1,45 @@
+@@ -0,0 +1,43 @@
 +package org.bukkit.craftbukkit;
-+
++        
 +import com.google.inject.AbstractModule;
 +import com.google.inject.multibindings.OptionalBinder;
 +import games.pixeljam.inject.ProtectedBinder;
@@ -37,12 +37,10 @@ index 0000000000000000000000000000000000000000..07779bdb75324e1c681b9a6eb056fa80
 +        this.scheduler = scheduler;
 +        this.servicesManager = servicesManager;
 +        this.plugins = plugins;
-+
 +    }
 +
 +    @Override
 +    protected void configure() {
-+
 +        OptionalBinder.newOptionalBinder(binder(), Server.class).setBinding().toInstance(server);
 +        OptionalBinder.newOptionalBinder(binder(), PluginManager.class).setBinding().toInstance(pluginManager);
 +        OptionalBinder.newOptionalBinder(binder(), BukkitScheduler.class).setBinding().toInstance(scheduler);
@@ -51,12 +49,13 @@ index 0000000000000000000000000000000000000000..07779bdb75324e1c681b9a6eb056fa80
 +        for (Plugin plugin : plugins) {
 +            ProtectedBinder.newProtectedBinder(binder()).install(new PluginModule(plugin));
 +        }
-+
++        
 +    }
 +
 +}
+\ No newline at end of file
 diff --git a/src/main/java/org/bukkit/craftbukkit/CraftServer.java b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
-index b42d145f3ab9b91cbd1fa7b7772769ed93f8e54f..d2e7d4ed0106003644a102e3fe0abeed15b3f7cc 100644
+index 2dcc58fefb1fa87dbabf68790554662a7446e840..8f9fd69f010c1a0b2e71b099ba161aaa3f02a439 100644
 --- a/src/main/java/org/bukkit/craftbukkit/CraftServer.java
 +++ b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
 @@ -7,6 +7,9 @@ import com.google.common.collect.ImmutableList;
@@ -69,7 +68,7 @@ index b42d145f3ab9b91cbd1fa7b7772769ed93f8e54f..d2e7d4ed0106003644a102e3fe0abeed
  import com.mojang.authlib.GameProfile;
  import com.mojang.brigadier.StringReader;
  import com.mojang.brigadier.exceptions.CommandSyntaxException;
-@@ -283,6 +286,8 @@ public final class CraftServer implements Server {
+@@ -288,6 +291,8 @@ public final class CraftServer implements Server {
      private final io.papermc.paper.logging.SysoutCatcher sysoutCatcher = new io.papermc.paper.logging.SysoutCatcher(); // Paper
      private final CraftPotionBrewer potionBrewer = new CraftPotionBrewer(); // Paper
  
@@ -78,18 +77,18 @@ index b42d145f3ab9b91cbd1fa7b7772769ed93f8e54f..d2e7d4ed0106003644a102e3fe0abeed
      static {
          ConfigurationSerialization.registerClass(CraftOfflinePlayer.class);
          ConfigurationSerialization.registerClass(CraftPlayerProfile.class);
-@@ -418,6 +423,8 @@ public final class CraftServer implements Server {
-                 pluginFolder.mkdirs();
-             }
-             Plugin[] plugins = this.pluginManager.loadPlugins(pluginFolder, this.extraPluginJars());
+@@ -468,6 +473,8 @@ public final class CraftServer implements Server {
+             Plugin[] plugins = this.pluginManager.loadPlugins(pluginFolder, extraJars);
+             // Purpur end
+             // Paper end
 +            // Sinfonia - added injector
 +            injector = Guice.createInjector(Stage.PRODUCTION, new ServerModule(), new CraftModule(this, getPluginManager(), getScheduler(), getServicesManager(), plugins));
-             // Paper end
              for (Plugin plugin : plugins) {
                  try {
+                     String message = String.format("Loading %s", plugin.getDescription().getFullName());
 diff --git a/src/main/java/org/bukkit/craftbukkit/ServerModule.java b/src/main/java/org/bukkit/craftbukkit/ServerModule.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..b2d7d3af31afe63f9ba0f950603fe70b5bfac2dd
+index 0000000000000000000000000000000000000000..a89a8de121d321c8c79bc269bf7a8244f8d4bd43
 --- /dev/null
 +++ b/src/main/java/org/bukkit/craftbukkit/ServerModule.java
 @@ -0,0 +1,20 @@
@@ -113,3 +112,4 @@ index 0000000000000000000000000000000000000000..b2d7d3af31afe63f9ba0f950603fe70b
 +    }
 +
 +}
+\ No newline at end of file

@@ -1,14 +1,14 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
-From: =?UTF-8?q?Ian=20Casta=C3=B1o?= <ianfe@martina.com.co>
-Date: Thu, 23 Jun 2022 11:54:30 -0500
-Subject: [PATCH] Added find player by ID handle
+From: TomateDeveloper <ianfe@martina.com.co>
+Date: Fri, 11 Nov 2022 20:03:29 -0500
+Subject: [PATCH] Added find player by ID property
 
 
 diff --git a/src/main/java/net/minecraft/server/level/ServerPlayer.java b/src/main/java/net/minecraft/server/level/ServerPlayer.java
-index 9c09e46aeea0527880e935c1e3cf1046036d5764..4f7fd65c0cffd483f87fca98feb5b61155ad7549 100644
+index 467f60dcbed645d773e7e3e042d2bbbd8f5bb589..a23868abc4e22aa976800a96981c383d1bc50370 100644
 --- a/src/main/java/net/minecraft/server/level/ServerPlayer.java
 +++ b/src/main/java/net/minecraft/server/level/ServerPlayer.java
-@@ -268,6 +268,7 @@ public class ServerPlayer extends Player {
+@@ -271,6 +271,7 @@ public class ServerPlayer extends Player {
      public double lastEntitySpawnRadiusSquared; // Paper - optimise isOutsideRange, this field is in blocks
      public final com.destroystokyo.paper.util.misc.PooledLinkedHashSets.PooledObjectLinkedOpenHashSet<ServerPlayer> cachedSingleHashSet; // Paper
      public org.bukkit.event.player.PlayerQuitEvent.QuitReason quitReason = null; // Paper - there are a lot of changes to do if we change all methods leading to the event
@@ -16,11 +16,10 @@ index 9c09e46aeea0527880e935c1e3cf1046036d5764..4f7fd65c0cffd483f87fca98feb5b611
  
      public ServerPlayer(MinecraftServer server, ServerLevel world, GameProfile profile, @Nullable ProfilePublicKey publicKey) {
          super(world, world.getSharedSpawnPos(), world.getSharedSpawnAngle(), profile, publicKey);
-@@ -342,6 +343,17 @@ public class ServerPlayer extends Player {
-         this.cachedSingleMobDistanceMap = new com.destroystokyo.paper.util.PooledHashSets.PooledObjectLinkedOpenHashSet<>(this); // Paper
+@@ -365,6 +366,16 @@ public class ServerPlayer extends Player {
          this.spawnInvulnerableTime = world.purpurConfig.playerSpawnInvulnerableTicks; // Purpur
      }
-+
+ 
 +    // Sinfonia start - Get by database identifier
 +    public String getDatabaseIdentifier() {
 +        return this.databaseIdentifier;
@@ -31,10 +30,10 @@ index 9c09e46aeea0527880e935c1e3cf1046036d5764..4f7fd65c0cffd483f87fca98feb5b611
 +        this.databaseIdentifier = databaseIdentifier;
 +    }
 +
-     // Paper start - Chunk priority
-     public BlockPos getPointInFront(double inFront) {
-         double rads = Math.toRadians(net.minecraft.server.MCUtil.normalizeYaw(this.yRot + 90)); // MC rotates yaw 90 for some odd reason
-@@ -458,6 +470,13 @@ public class ServerPlayer extends Player {
+     // Yes, this doesn't match Vanilla, but it's the best we can do for now.
+     // If this is an issue, PRs are welcome
+     public final BlockPos getSpawnPoint(ServerLevel worldserver) {
+@@ -465,6 +476,13 @@ public class ServerPlayer extends Player {
          if (nbt.contains("recipeBook", 10)) {
              this.recipeBook.fromNbt(nbt.getCompound("recipeBook"), this.server.getRecipeManager());
          }
@@ -48,42 +47,32 @@ index 9c09e46aeea0527880e935c1e3cf1046036d5764..4f7fd65c0cffd483f87fca98feb5b611
          this.getBukkitEntity().readExtraData(nbt); // CraftBukkit
  
          if (this.isSleeping()) {
-@@ -549,6 +568,7 @@ public class ServerPlayer extends Player {
- 
-         nbt.putBoolean("Purpur.TPSBar", this.tpsBar); // Purpur
-         nbt.putBoolean("Purpur.CompassBar", this.compassBar); // Purpur
-+        nbt.putString("databaseIdentifier", this.databaseIdentifier); // Sinfonia
+@@ -495,6 +513,7 @@ public class ServerPlayer extends Player {
+         if (nbt.contains("Purpur.RamBar")) { this.ramBar = nbt.getBoolean("Purpur.RamBar"); } // Purpur
+         if (nbt.contains("Purpur.TPSBar")) { this.tpsBar = nbt.getBoolean("Purpur.TPSBar"); } // Purpur
+         if (nbt.contains("Purpur.CompassBar")) { this.compassBar = nbt.getBoolean("Purpur.CompassBar"); } // Purpur
++        nbt.putString("databaseIdentifier", this.databaseIdentifier);
      }
  
-     // CraftBukkit start - World fallback code, either respawn location or global spawn
+     @Override
 diff --git a/src/main/java/net/minecraft/server/players/PlayerList.java b/src/main/java/net/minecraft/server/players/PlayerList.java
-index fecd65dc87a99a5692c59dd590b20327b1eb31c2..cb25f72857e81865ee0d0cd6e14d98603b530377 100644
+index 82634bd0ab2792f637573c2ee7d9d00ba1104900..4107c7ba20c4db8b7ae834959b90a73d4362ddbd 100644
 --- a/src/main/java/net/minecraft/server/players/PlayerList.java
 +++ b/src/main/java/net/minecraft/server/players/PlayerList.java
-@@ -133,6 +133,7 @@ public abstract class PlayerList {
-     private static final SimpleDateFormat BAN_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd 'at' HH:mm:ss z");
-     private final MinecraftServer server;
-     public final List<ServerPlayer> players = new java.util.concurrent.CopyOnWriteArrayList(); // CraftBukkit - ArrayList -> CopyOnWriteArrayList: Iterator safety
-+    private final Map<String, ServerPlayer> playersByIdentifier = Maps.newHashMap(); // Sinfonia - Players by database identifier
-     private final Map<UUID, ServerPlayer> playersByUUID = Maps.newHashMap();
-     private final UserBanList bans;
-     private final IpBanList ipBans;
-@@ -347,6 +348,14 @@ public abstract class PlayerList {
+@@ -354,6 +354,12 @@ public abstract class PlayerList {
          this.players.add(player);
          this.playersByName.put(player.getScoreboardName().toLowerCase(java.util.Locale.ROOT), player); // Spigot
          this.playersByUUID.put(player.getUUID(), player);
 +        this.playersByIdentifier.put("", player); // Sinfonia - Find by database identifier
-+
 +        String oldIdentifier = player.getDatabaseIdentifier();
 +        if (oldIdentifier != null && !oldIdentifier.isEmpty())  {
 +            this.playersByIdentifier.put(oldIdentifier, player);
 +        }
 +
-+
          // this.broadcastAll(new PacketPlayOutPlayerInfo(PacketPlayOutPlayerInfo.EnumPlayerInfoAction.ADD_PLAYER, new EntityPlayer[]{entityplayer})); // CraftBukkit - replaced with loop below
  
          // Paper start - correctly register player BEFORE PlayerJoinEvent, so the entity is valid and doesn't require tick delay hacks
-@@ -364,6 +373,9 @@ public abstract class PlayerList {
+@@ -371,6 +377,9 @@ public abstract class PlayerList {
          PlayerJoinEvent playerJoinEvent = new PlayerJoinEvent(bukkitPlayer, PaperAdventure.asAdventure(ichatmutablecomponent)); // Paper - Adventure
          this.cserver.getPluginManager().callEvent(playerJoinEvent);
  
@@ -93,7 +82,7 @@ index fecd65dc87a99a5692c59dd590b20327b1eb31c2..cb25f72857e81865ee0d0cd6e14d9860
          if (!player.connection.connection.isConnected()) {
              return;
          }
-@@ -675,6 +687,10 @@ public abstract class PlayerList {
+@@ -682,6 +691,10 @@ public abstract class PlayerList {
          ServerPlayer entityplayer1 = (ServerPlayer) this.playersByUUID.get(uuid);
  
          if (entityplayer1 == entityplayer) {
@@ -104,7 +93,7 @@ index fecd65dc87a99a5692c59dd590b20327b1eb31c2..cb25f72857e81865ee0d0cd6e14d9860
              this.playersByUUID.remove(uuid);
              // CraftBukkit start
              // this.stats.remove(uuid);
-@@ -1573,6 +1589,11 @@ public abstract class PlayerList {
+@@ -1607,6 +1620,11 @@ public abstract class PlayerList {
          return (ServerPlayer) this.playersByUUID.get(uuid);
      }
  
@@ -117,10 +106,10 @@ index fecd65dc87a99a5692c59dd590b20327b1eb31c2..cb25f72857e81865ee0d0cd6e14d9860
          return false;
      }
 diff --git a/src/main/java/org/bukkit/craftbukkit/CraftServer.java b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
-index 936ce98bc7edeb06a310f34c02d2e8485d5558ef..58a2a66ba948cf90d229955b7cac11e7ec84c3a7 100644
+index 8f9fd69f010c1a0b2e71b099ba161aaa3f02a439..9850300d17478faa0fb0862758442a37c5ffcd6a 100644
 --- a/src/main/java/org/bukkit/craftbukkit/CraftServer.java
 +++ b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
-@@ -375,6 +375,14 @@ public final class CraftServer implements Server {
+@@ -394,6 +394,14 @@ public final class CraftServer implements Server {
          datapackManager = new io.papermc.paper.datapack.PaperDatapackManager(console.getPackRepository()); // Paper
      }
  
@@ -136,15 +125,13 @@ index 936ce98bc7edeb06a310f34c02d2e8485d5558ef..58a2a66ba948cf90d229955b7cac11e7
          return this.overrideAllCommandBlockCommands || this.commandsConfiguration.getStringList("command-block-overrides").contains(command);
      }
 diff --git a/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java b/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
-index a43aad1317b50b5ef42a84721f82318beccd66ea..098481b4bade0de317466deb1f7634a4230439d6 100644
+index bd363cd808f294f47298258ee7b99aeb36150887..b051b04fefadcd834aec3633c6515be411439fc5 100644
 --- a/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
 +++ b/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
-@@ -2872,4 +2872,18 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
+@@ -3038,6 +3038,18 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
          return getHandle().flyingFallDamage;
      }
-     // Purpur end
-+
-+
+ 
 +    // Sinfonia start - Get player by Identifier
 +    @Override
 +    public String getPlayerIdentifier() {
@@ -157,4 +144,6 @@ index a43aad1317b50b5ef42a84721f82318beccd66ea..098481b4bade0de317466deb1f7634a4
 +    }
 +    // Sinfonia end
 +
- }
+     @Override
+     public void sendBlockHighlight(Location location, int duration) {
+         sendBlockHighlight(location, duration, "", 0x6400FF00);

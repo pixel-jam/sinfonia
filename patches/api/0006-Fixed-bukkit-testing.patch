@@ -5,10 +5,10 @@ Subject: [PATCH] Fixed bukkit testing
 
 
 diff --git a/src/main/java/org/bukkit/Bukkit.java b/src/main/java/org/bukkit/Bukkit.java
-index 44673fcec96a075bd02800b51318832d82b63c7e..e134887cb530f2613f61e6302a1965d0df2b0847 100644
+index e5943f1313f97dd6a353873d54424ae70d46dcef..cd1a2ae263da002db35be6bf5d937562f0dd8c52 100644
 --- a/src/main/java/org/bukkit/Bukkit.java
 +++ b/src/main/java/org/bukkit/Bukkit.java
-@@ -661,6 +661,8 @@ public final class Bukkit {
+@@ -662,6 +662,8 @@ public final class Bukkit {
          return server.getPlayer(name);
      }
  
@@ -18,7 +18,7 @@ index 44673fcec96a075bd02800b51318832d82b63c7e..e134887cb530f2613f61e6302a1965d0
       * Gets the player with the exact given name, case insensitive.
       *
 diff --git a/src/test/java/org/bukkit/AnnotationTest.java b/src/test/java/org/bukkit/AnnotationTest.java
-index 18dc31250de66b5d580843d7a7604cf7158df3c4..b0a11a1dc9600e726f3d5ba8f00401cd19384471 100644
+index a85b020763f55aa7200400f7abdc4b482514adf0..48b5fca79d96af1ba1c25705b0cebe5496b90a58 100644
 --- a/src/test/java/org/bukkit/AnnotationTest.java
 +++ b/src/test/java/org/bukkit/AnnotationTest.java
 @@ -49,6 +49,8 @@ public class AnnotationTest {
