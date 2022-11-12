@@ -1,0 +1,43 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: TomateDeveloper <ianfe@martina.com.co>
+Date: Sat, 12 Nov 2022 13:39:54 -0500
+Subject: [PATCH] Reordered database identified and assert not nulling
+
+
+diff --git a/src/main/java/net/minecraft/server/level/ServerPlayer.java b/src/main/java/net/minecraft/server/level/ServerPlayer.java
+index a23868abc4e22aa976800a96981c383d1bc50370..37fcaf92d8f052e963f5b777905fde005c6d6dc3 100644
+--- a/src/main/java/net/minecraft/server/level/ServerPlayer.java
++++ b/src/main/java/net/minecraft/server/level/ServerPlayer.java
+@@ -271,7 +271,7 @@ public class ServerPlayer extends Player {
+     public double lastEntitySpawnRadiusSquared; // Paper - optimise isOutsideRange, this field is in blocks
+     public final com.destroystokyo.paper.util.misc.PooledLinkedHashSets.PooledObjectLinkedOpenHashSet<ServerPlayer> cachedSingleHashSet; // Paper
+     public org.bukkit.event.player.PlayerQuitEvent.QuitReason quitReason = null; // Paper - there are a lot of changes to do if we change all methods leading to the event
+-    private String databaseIdentifier; // Sinfonia
++    private String databaseIdentifier = ""; // Sinfonia
+ 
+     public ServerPlayer(MinecraftServer server, ServerLevel world, GameProfile profile, @Nullable ProfilePublicKey publicKey) {
+         super(world, world.getSharedSpawnPos(), world.getSharedSpawnAngle(), profile, publicKey);
+@@ -477,12 +477,6 @@ public class ServerPlayer extends Player {
+             this.recipeBook.fromNbt(nbt.getCompound("recipeBook"), this.server.getRecipeManager());
+         }
+ 
+-        // Sinfonia start - Set database identifier
+-        if (nbt.contains("databaseIdentifier")) {
+-            this.databaseIdentifier = nbt.getString("databaseIdentifier");
+-        }
+-        // Sinfonia end
+-
+         this.getBukkitEntity().readExtraData(nbt); // CraftBukkit
+ 
+         if (this.isSleeping()) {
+@@ -513,7 +507,10 @@ public class ServerPlayer extends Player {
+         if (nbt.contains("Purpur.RamBar")) { this.ramBar = nbt.getBoolean("Purpur.RamBar"); } // Purpur
+         if (nbt.contains("Purpur.TPSBar")) { this.tpsBar = nbt.getBoolean("Purpur.TPSBar"); } // Purpur
+         if (nbt.contains("Purpur.CompassBar")) { this.compassBar = nbt.getBoolean("Purpur.CompassBar"); } // Purpur
++        if (nbt.contains("databaseIdentifier")) { this.databaseIdentifier = nbt.getString("databaseIdentifier"); } // Sinfonia
++
+         nbt.putString("databaseIdentifier", this.databaseIdentifier);
++
+     }
+ 
+     @Override
