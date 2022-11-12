@@ -1,0 +1,18 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: TomateDeveloper <ianfe@martina.com.co>
+Date: Fri, 11 Nov 2022 20:06:21 -0500
+Subject: [PATCH] Added find player by ID handle
+
+
+diff --git a/src/main/java/net/minecraft/server/players/PlayerList.java b/src/main/java/net/minecraft/server/players/PlayerList.java
+index 4107c7ba20c4db8b7ae834959b90a73d4362ddbd..0b29588d99731a4d4bd49f0d6dbc326b0006ba5c 100644
+--- a/src/main/java/net/minecraft/server/players/PlayerList.java
++++ b/src/main/java/net/minecraft/server/players/PlayerList.java
+@@ -134,6 +134,7 @@ public abstract class PlayerList {
+     private static final SimpleDateFormat BAN_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd 'at' HH:mm:ss z");
+     private final MinecraftServer server;
+     public final List<ServerPlayer> players = new java.util.concurrent.CopyOnWriteArrayList(); // CraftBukkit - ArrayList -> CopyOnWriteArrayList: Iterator safety
++    private final Map<String, ServerPlayer> playersByIdentifier = Maps.newHashMap(); // Sinfonia - Players by database identifier
+     private final Map<UUID, ServerPlayer> playersByUUID = Maps.newHashMap();
+     private final UserBanList bans;
+     private final IpBanList ipBans;
