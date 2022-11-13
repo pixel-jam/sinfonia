@@ -1,0 +1,70 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: TomateDeveloper <ianfe@martina.com.co>
+Date: Sun, 13 Nov 2022 18:42:20 -0500
+Subject: [PATCH] New approach of set player identifier
+
+
+diff --git a/src/main/java/net/minecraft/server/level/ServerPlayer.java b/src/main/java/net/minecraft/server/level/ServerPlayer.java
+index a2e5311548ce6723766d1e3ab18928cdc00900bc..ade504be04a42a6965b420561d7042dafaef34ba 100644
+--- a/src/main/java/net/minecraft/server/level/ServerPlayer.java
++++ b/src/main/java/net/minecraft/server/level/ServerPlayer.java
+@@ -374,6 +374,7 @@ public class ServerPlayer extends Player {
+     // Sinfonia start - Get by database identifier
+     public void setDatabaseIdentifier(String databaseIdentifier) {
+         this.databaseIdentifier = databaseIdentifier;
++        this.server.getPlayerList().setPlayerWithIdentifier(this, databaseIdentifier);
+     }
+ 
+     // Yes, this doesn't match Vanilla, but it's the best we can do for now.
+diff --git a/src/main/java/net/minecraft/server/players/PlayerList.java b/src/main/java/net/minecraft/server/players/PlayerList.java
+index 0b29588d99731a4d4bd49f0d6dbc326b0006ba5c..e09bdc59f6af79a07ff32734a14a2dc8ace9a3c0 100644
+--- a/src/main/java/net/minecraft/server/players/PlayerList.java
++++ b/src/main/java/net/minecraft/server/players/PlayerList.java
+@@ -355,11 +355,6 @@ public abstract class PlayerList {
+         this.players.add(player);
+         this.playersByName.put(player.getScoreboardName().toLowerCase(java.util.Locale.ROOT), player); // Spigot
+         this.playersByUUID.put(player.getUUID(), player);
+-        this.playersByIdentifier.put("", player); // Sinfonia - Find by database identifier
+-        String oldIdentifier = player.getDatabaseIdentifier();
+-        if (oldIdentifier != null && !oldIdentifier.isEmpty())  {
+-            this.playersByIdentifier.put(oldIdentifier, player);
+-        }
+ 
+         // this.broadcastAll(new PacketPlayOutPlayerInfo(PacketPlayOutPlayerInfo.EnumPlayerInfoAction.ADD_PLAYER, new EntityPlayer[]{entityplayer})); // CraftBukkit - replaced with loop below
+ 
+@@ -378,9 +373,6 @@ public abstract class PlayerList {
+         PlayerJoinEvent playerJoinEvent = new PlayerJoinEvent(bukkitPlayer, PaperAdventure.asAdventure(ichatmutablecomponent)); // Paper - Adventure
+         this.cserver.getPluginManager().callEvent(playerJoinEvent);
+ 
+-        playersByIdentifier.remove(oldIdentifier);
+-        playersByIdentifier.put(player.getDatabaseIdentifier(), player);
+-
+         if (!player.connection.connection.isConnected()) {
+             return;
+         }
+@@ -692,10 +684,7 @@ public abstract class PlayerList {
+         ServerPlayer entityplayer1 = (ServerPlayer) this.playersByUUID.get(uuid);
+ 
+         if (entityplayer1 == entityplayer) {
+-            String dbId = entityplayer.getDatabaseIdentifier();
+-            if (dbId != null) {
+-                this.playersByIdentifier.remove(dbId);
+-            }
++            this.playersByIdentifier.remove(entityplayer.getDatabaseIdentifier()); // Sinfonia - Remove player on disconnect
+             this.playersByUUID.remove(uuid);
+             // CraftBukkit start
+             // this.stats.remove(uuid);
+@@ -1626,6 +1615,13 @@ public abstract class PlayerList {
+         return this.playersByIdentifier.get(id);
+     }
+ 
++    // Sinfonia start - Updated way of setting player identifier
++    public void setPlayerWithIdentifier(ServerPlayer player, String id) {
++        if (!id.equalsIgnoreCase("")) {
++            this.playersByIdentifier.put(id, player);
++        }
++    }
++
+     public boolean canBypassPlayerLimit(GameProfile profile) {
+         return false;
+     }
