@@ -1,0 +1,38 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: TomateDeveloper <ianfe@martina.com.co>
+Date: Sun, 13 Nov 2022 16:38:35 -0500
+Subject: [PATCH] Reformatted player id registry approach to be more flexible
+
+
+diff --git a/src/main/java/org/bukkit/Bukkit.java b/src/main/java/org/bukkit/Bukkit.java
+index cd1a2ae263da002db35be6bf5d937562f0dd8c52..f363c7ab1c30c6c922902abaebda3509fea5c812 100644
+--- a/src/main/java/org/bukkit/Bukkit.java
++++ b/src/main/java/org/bukkit/Bukkit.java
+@@ -664,6 +664,8 @@ public final class Bukkit {
+ 
+     public static Player getPlayerByIdentifier(@NotNull String id) { return server.getPlayerByIdentifier(id); }
+ 
++    public static void registerPlayerIdentifier(@NotNull Player player, @NotNull String id) { server.registerPlayerIdentifier(player, id); }
++
+     /**
+      * Gets the player with the exact given name, case insensitive.
+      *
+diff --git a/src/main/java/org/bukkit/Server.java b/src/main/java/org/bukkit/Server.java
+index 425f68efce09359d976c3e3d178cbac456d6cc82..8ca00ab443de3f02af003cb774827545cfc8aa73 100644
+--- a/src/main/java/org/bukkit/Server.java
++++ b/src/main/java/org/bukkit/Server.java
+@@ -565,6 +565,14 @@ public interface Server extends PluginMessageRecipient, net.kyori.adventure.audi
+     @Nullable
+     public Player getPlayerByIdentifier(String id); // Sinfonia - Get by player id
+ 
++    /**
++     * Register player identifier at server list.
++     *
++     * @param player to be registered
++     * @param id which will be registered
++     */
++    void registerPlayerIdentifier(Player player, String id); // Sinfonia - Set player id
++
+     /**
+      * Attempts to match any players with the given name, and returns a list
+      * of all possibly matches.
