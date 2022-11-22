@@ -25,10 +25,10 @@ index 6549c3edea507ce235e855ae534e7778bb5ca999..425f68efce09359d976c3e3d178cbac4
       * Attempts to match any players with the given name, and returns a list
       * of all possibly matches.
 diff --git a/src/main/java/org/bukkit/entity/Player.java b/src/main/java/org/bukkit/entity/Player.java
-index 9c2dcca0b6e34a3083226360575f0956a077d767..ef6f1a7bc47382b8c14d373efd355d9655d6012d 100644
+index 93e18658bb7a83a35f812811c2c87630a4b7eb0b..162a779001f5489c602298361f30f9c069d9b918 100644
 --- a/src/main/java/org/bukkit/entity/Player.java
 +++ b/src/main/java/org/bukkit/entity/Player.java
-@@ -2921,6 +2921,20 @@ public interface Player extends HumanEntity, Conversable, OfflinePlayer, PluginM
+@@ -2974,6 +2974,20 @@ public interface Player extends HumanEntity, Conversable, OfflinePlayer, PluginM
       */
      public boolean hasFlyingFallDamage();
  

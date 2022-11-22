@@ -5,7 +5,7 @@ Subject: [PATCH] Added find player by ID property
 
 
 diff --git a/src/main/java/net/minecraft/server/level/ServerPlayer.java b/src/main/java/net/minecraft/server/level/ServerPlayer.java
-index 467f60dcbed645d773e7e3e042d2bbbd8f5bb589..a23868abc4e22aa976800a96981c383d1bc50370 100644
+index 2fb0398fa693a0ce0d298c15426d4b592e69195e..48bba895456a8e00566797b56e5480d2b9979b3b 100644
 --- a/src/main/java/net/minecraft/server/level/ServerPlayer.java
 +++ b/src/main/java/net/minecraft/server/level/ServerPlayer.java
 @@ -271,6 +271,7 @@ public class ServerPlayer extends Player {
@@ -106,7 +106,7 @@ index 82634bd0ab2792f637573c2ee7d9d00ba1104900..4107c7ba20c4db8b7ae834959b90a73d
          return false;
      }
 diff --git a/src/main/java/org/bukkit/craftbukkit/CraftServer.java b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
-index 8f9fd69f010c1a0b2e71b099ba161aaa3f02a439..9850300d17478faa0fb0862758442a37c5ffcd6a 100644
+index d077ec73278fa9609cfb9758e813b09f02ebcd0f..6b51ee48682284966ea25f184d051aa4c4eaa231 100644
 --- a/src/main/java/org/bukkit/craftbukkit/CraftServer.java
 +++ b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
 @@ -394,6 +394,14 @@ public final class CraftServer implements Server {
@@ -125,10 +125,10 @@ index 8f9fd69f010c1a0b2e71b099ba161aaa3f02a439..9850300d17478faa0fb0862758442a37
          return this.overrideAllCommandBlockCommands || this.commandsConfiguration.getStringList("command-block-overrides").contains(command);
      }
 diff --git a/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java b/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
-index bd363cd808f294f47298258ee7b99aeb36150887..b051b04fefadcd834aec3633c6515be411439fc5 100644
+index 6c816179a2fef2c913580339eb68040e5af3fd92..d785887ba3218bbf59572a21d232e918021ef311 100644
 --- a/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
 +++ b/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
-@@ -3038,6 +3038,18 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
+@@ -3073,6 +3073,18 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
          return getHandle().flyingFallDamage;
      }
  
