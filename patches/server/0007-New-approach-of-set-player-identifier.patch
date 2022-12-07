@@ -5,10 +5,10 @@ Subject: [PATCH] New approach of set player identifier
 
 
 diff --git a/src/main/java/net/minecraft/server/level/ServerPlayer.java b/src/main/java/net/minecraft/server/level/ServerPlayer.java
-index a2e5311548ce6723766d1e3ab18928cdc00900bc..ade504be04a42a6965b420561d7042dafaef34ba 100644
+index e40879c2de9200880f17dbd2a1b44771405a0577..635fa49e9fa7374454520b7f5339ad39b7de4c97 100644
 --- a/src/main/java/net/minecraft/server/level/ServerPlayer.java
 +++ b/src/main/java/net/minecraft/server/level/ServerPlayer.java
-@@ -374,6 +374,7 @@ public class ServerPlayer extends Player {
+@@ -381,6 +381,7 @@ public class ServerPlayer extends Player {
      // Sinfonia start - Get by database identifier
      public void setDatabaseIdentifier(String databaseIdentifier) {
          this.databaseIdentifier = databaseIdentifier;

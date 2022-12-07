@@ -5,7 +5,7 @@ Subject: [PATCH] Added find player by ID property
 
 
 diff --git a/src/main/java/net/minecraft/server/level/ServerPlayer.java b/src/main/java/net/minecraft/server/level/ServerPlayer.java
-index 2fb0398fa693a0ce0d298c15426d4b592e69195e..48bba895456a8e00566797b56e5480d2b9979b3b 100644
+index bd472130d94ec2a7507a585809fa99047eb60d19..f7820c3e04b636c44a56ce78bfe1179f80a408ae 100644
 --- a/src/main/java/net/minecraft/server/level/ServerPlayer.java
 +++ b/src/main/java/net/minecraft/server/level/ServerPlayer.java
 @@ -271,6 +271,7 @@ public class ServerPlayer extends Player {
@@ -16,7 +16,7 @@ index 2fb0398fa693a0ce0d298c15426d4b592e69195e..48bba895456a8e00566797b56e5480d2
  
      public ServerPlayer(MinecraftServer server, ServerLevel world, GameProfile profile, @Nullable ProfilePublicKey publicKey) {
          super(world, world.getSharedSpawnPos(), world.getSharedSpawnAngle(), profile, publicKey);
-@@ -365,6 +366,16 @@ public class ServerPlayer extends Player {
+@@ -372,6 +373,16 @@ public class ServerPlayer extends Player {
          this.spawnInvulnerableTime = world.purpurConfig.playerSpawnInvulnerableTicks; // Purpur
      }
  
@@ -33,7 +33,7 @@ index 2fb0398fa693a0ce0d298c15426d4b592e69195e..48bba895456a8e00566797b56e5480d2
      // Yes, this doesn't match Vanilla, but it's the best we can do for now.
      // If this is an issue, PRs are welcome
      public final BlockPos getSpawnPoint(ServerLevel worldserver) {
-@@ -465,6 +476,13 @@ public class ServerPlayer extends Player {
+@@ -472,6 +483,13 @@ public class ServerPlayer extends Player {
          if (nbt.contains("recipeBook", 10)) {
              this.recipeBook.fromNbt(nbt.getCompound("recipeBook"), this.server.getRecipeManager());
          }
@@ -47,7 +47,7 @@ index 2fb0398fa693a0ce0d298c15426d4b592e69195e..48bba895456a8e00566797b56e5480d2
          this.getBukkitEntity().readExtraData(nbt); // CraftBukkit
  
          if (this.isSleeping()) {
-@@ -495,6 +513,7 @@ public class ServerPlayer extends Player {
+@@ -502,6 +520,7 @@ public class ServerPlayer extends Player {
          if (nbt.contains("Purpur.RamBar")) { this.ramBar = nbt.getBoolean("Purpur.RamBar"); } // Purpur
          if (nbt.contains("Purpur.TPSBar")) { this.tpsBar = nbt.getBoolean("Purpur.TPSBar"); } // Purpur
          if (nbt.contains("Purpur.CompassBar")) { this.compassBar = nbt.getBoolean("Purpur.CompassBar"); } // Purpur
