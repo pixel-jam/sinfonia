@@ -1,11 +1,11 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
-From: Encode42 <me@encode42.dev>
+From: =?UTF-8?q?Ian=20Casta=C3=B1o?= <ianfe@martina.com.co>
 Date: Thu, 16 Sep 2021 20:39:45 -0400
 Subject: [PATCH] Rebrand
 
 
 diff --git a/build.gradle.kts b/build.gradle.kts
-index 8ffc0d92ea29b95e5406ed81088ecf00e7679a97..5087d7d7d969ebc9d88367715a71ae82423b1af2 100644
+index 7de4b51cb4afdcbdfb8d1dc32f56252d997e23a8..4e5aa2ef0a165dff7de61d40339c4793a43f6bac 100644
 --- a/build.gradle.kts
 +++ b/build.gradle.kts
 @@ -7,7 +7,7 @@ plugins {
@@ -13,19 +13,10 @@ index 8ffc0d92ea29b95e5406ed81088ecf00e7679a97..5087d7d7d969ebc9d88367715a71ae82
  
  dependencies {
 -    implementation(project(":purpur-api")) // Purpur
-+    implementation(project(":sinfonia-api")) // Purpur // Sinfonia
-     // Pufferfish start
-     implementation("io.papermc.paper:paper-mojangapi:1.19.2-R0.1-SNAPSHOT") {
++    implementation(project(":sinfonia-api")) // Purpur
+     implementation("io.papermc.paper:paper-mojangapi:1.19.3-R0.1-SNAPSHOT") {
          exclude("io.papermc.paper", "paper-api")
-@@ -84,7 +84,7 @@ tasks.jar {
-         attributes(
-             "Main-Class" to "org.bukkit.craftbukkit.Main",
-             "Implementation-Title" to "CraftBukkit",
--            "Implementation-Version" to "git-Purpur-$implementationVersion",// Purpur
-+            "Implementation-Version" to "git-Sinfonia-$implementationVersion",// Purpur // Sinfonia
-             "Implementation-Vendor" to date, // Paper
-             "Specification-Title" to "Bukkit",
-             "Specification-Version" to project.version,
+     }
 diff --git a/src/main/java/com/destroystokyo/paper/PaperVersionFetcher.java b/src/main/java/com/destroystokyo/paper/PaperVersionFetcher.java
 index fba5dbdb7bcbb55400ef18342c9b54612972a718..ba3a7717239069d33162f3b7fc33974889cadfff 100644
 --- a/src/main/java/com/destroystokyo/paper/PaperVersionFetcher.java
@@ -61,10 +52,10 @@ index fba5dbdb7bcbb55400ef18342c9b54612972a718..ba3a7717239069d33162f3b7fc339748
          switch (distance) {
              case -1:
 diff --git a/src/main/java/org/bukkit/craftbukkit/CraftServer.java b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
-index 2491785f5edd782b74189bef33eeffe13288f3da..2dcc58fefb1fa87dbabf68790554662a7446e840 100644
+index 80d4167edd7c87240ce02ae122153976015d548a..75d235df307f636cda9fc66fd4797db9e6de18d1 100644
 --- a/src/main/java/org/bukkit/craftbukkit/CraftServer.java
 +++ b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
-@@ -249,7 +249,7 @@ import javax.annotation.Nullable; // Paper
+@@ -262,7 +262,7 @@ import javax.annotation.Nullable; // Paper
  import javax.annotation.Nonnull; // Paper
  
  public final class CraftServer implements Server {
@@ -87,7 +78,7 @@ index fb87620c742ff7912f5e8ccd2a7930dd605576d9..dec5dc778eb99a25e9474f8f2404d26e
  
          if (stream != null) {
 diff --git a/src/main/java/org/purpurmc/purpur/PurpurConfig.java b/src/main/java/org/purpurmc/purpur/PurpurConfig.java
-index ccca392a45cb05abb55ddd5c6c36e6f9c7a5d171..9311144b936683eac76dcc5cb8919d9d4d46ac37 100644
+index 76cbfb7e900bf2698776f54cfe498f4b42965221..15e600cb8da287906488c851817c681704d00a10 100644
 --- a/src/main/java/org/purpurmc/purpur/PurpurConfig.java
 +++ b/src/main/java/org/purpurmc/purpur/PurpurConfig.java
 @@ -244,7 +244,7 @@ public class PurpurConfig {

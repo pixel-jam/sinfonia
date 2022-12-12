@@ -5,17 +5,18 @@ Subject: [PATCH] Added injection ecosystem
 
 
 diff --git a/build.gradle.kts b/build.gradle.kts
-index e16706bc30fc3c851485fe0c68be4abdcc70e6e2..d34c8528b32b39c83197f843e8a66a7f7dca782b 100644
+index 051b2db3548d1b24f591f05eece0c8241475e9bf..dc134795133ebbde4379bc1c28cfb86d32f929c7 100644
 --- a/build.gradle.kts
 +++ b/build.gradle.kts
-@@ -42,6 +42,7 @@ dependencies {
-     api("org.apache.logging.log4j:log4j-api:2.17.1")
-     api("org.slf4j:slf4j-api:1.8.0-beta4")
-     api("io.sentry:sentry:5.4.0") // Pufferfish
-+    api("com.google.inject:guice:5.0.1") // Sinfonia - General injection environment
- 
-     implementation("org.ow2.asm:asm:9.2")
+@@ -46,6 +46,8 @@ dependencies {
      implementation("org.ow2.asm:asm-commons:9.2")
+     // Paper end
+ 
++    api("com.google.inject:guice:5.0.1") // Sinfonia - General injection environment
++
+     compileOnly("org.apache.maven:maven-resolver-provider:3.8.5")
+     compileOnly("org.apache.maven.resolver:maven-resolver-connector-basic:1.7.3")
+     compileOnly("org.apache.maven.resolver:maven-resolver-transport-http:1.7.3")
 diff --git a/src/main/java/games/pixeljam/inject/ForwardingBinder.java b/src/main/java/games/pixeljam/inject/ForwardingBinder.java
 new file mode 100644
 index 0000000000000000000000000000000000000000..9410a45d5572e4f0d741fa489aa91d6779818bdf
@@ -463,7 +464,7 @@ index 0000000000000000000000000000000000000000..86d1090977ed2e594b15935dd2f9f039
 +    }
 +}
 diff --git a/src/main/java/org/bukkit/plugin/Plugin.java b/src/main/java/org/bukkit/plugin/Plugin.java
-index 08aef59d8443038771704d9587e31f299e587307..a41ab4fc5c6030c1b99b103d4f0d7a023ceafb24 100644
+index cdf496598839380e073d7ccd89af473e9a702f00..323b02e48c31108d51a9271830c4596458592e87 100644
 --- a/src/main/java/org/bukkit/plugin/Plugin.java
 +++ b/src/main/java/org/bukkit/plugin/Plugin.java
 @@ -3,6 +3,8 @@ package org.bukkit.plugin;
@@ -475,7 +476,7 @@ index 08aef59d8443038771704d9587e31f299e587307..a41ab4fc5c6030c1b99b103d4f0d7a02
  import org.bukkit.Server;
  import org.bukkit.command.TabExecutor;
  import org.bukkit.configuration.file.FileConfiguration;
-@@ -212,4 +214,7 @@ public interface Plugin extends TabExecutor {
+@@ -213,4 +215,7 @@ public interface Plugin extends TabExecutor {
       */
      @NotNull
      public String getName();
@@ -538,7 +539,7 @@ index 0000000000000000000000000000000000000000..3759e1ccf1de1ce0b0709143f8a243b2
 +
 +}
 diff --git a/src/main/java/org/bukkit/plugin/java/PluginClassLoader.java b/src/main/java/org/bukkit/plugin/java/PluginClassLoader.java
-index 4f736a267eb4c8a3bedb2d02fb30468484b991d5..431f18d332c3f581fb717db8d03706e62076343a 100644
+index cb3c25ef46b279ffdde87f47f729eb8aa7549c1c..90add7eabc2d525cdd0c000794317e2db858bdb3 100644
 --- a/src/main/java/org/bukkit/plugin/java/PluginClassLoader.java
 +++ b/src/main/java/org/bukkit/plugin/java/PluginClassLoader.java
 @@ -20,6 +20,7 @@ import java.util.jar.JarEntry;
@@ -549,7 +550,7 @@ index 4f736a267eb4c8a3bedb2d02fb30468484b991d5..431f18d332c3f581fb717db8d03706e6
  import org.bukkit.plugin.InvalidPluginException;
  import org.bukkit.plugin.PluginDescriptionFile;
  import org.bukkit.plugin.SimplePluginManager;
-@@ -75,14 +76,16 @@ public final class PluginClassLoader extends URLClassLoader { // Spigot
+@@ -73,14 +74,16 @@ public final class PluginClassLoader extends URLClassLoader { // Spigot
                  throw new InvalidPluginException("Cannot find main class `" + description.getMain() + "'", ex);
              }
  
@@ -573,7 +574,7 @@ index 4f736a267eb4c8a3bedb2d02fb30468484b991d5..431f18d332c3f581fb717db8d03706e6
              throw new InvalidPluginException("No public constructor", ex);
          } catch (InstantiationException ex) {
 diff --git a/src/test/java/org/bukkit/AnnotationTest.java b/src/test/java/org/bukkit/AnnotationTest.java
-index 49de298146814fdf238929e10270ac6717dd73bd..98042aead6f0aefba50f1e1d140f2604254caed0 100644
+index 7769e19a5a86b5c76094058d31269fc6cc9f0ac3..d5a83d767f4653b7887e2febc74b172932b01e09 100644
 --- a/src/test/java/org/bukkit/AnnotationTest.java
 +++ b/src/test/java/org/bukkit/AnnotationTest.java
 @@ -45,6 +45,13 @@ public class AnnotationTest {

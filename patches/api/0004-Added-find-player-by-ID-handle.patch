@@ -5,7 +5,7 @@ Subject: [PATCH] Added find player by ID handle
 
 
 diff --git a/src/main/java/org/bukkit/Server.java b/src/main/java/org/bukkit/Server.java
-index 6549c3edea507ce235e855ae534e7778bb5ca999..425f68efce09359d976c3e3d178cbac456d6cc82 100644
+index fc0b33272114c13dff6f5a5795e190fda79c071c..ef4feccc746891e490ca881d6b84b1e6ab64b09d 100644
 --- a/src/main/java/org/bukkit/Server.java
 +++ b/src/main/java/org/bukkit/Server.java
 @@ -556,6 +556,15 @@ public interface Server extends PluginMessageRecipient, net.kyori.adventure.audi
@@ -25,10 +25,10 @@ index 6549c3edea507ce235e855ae534e7778bb5ca999..425f68efce09359d976c3e3d178cbac4
       * Attempts to match any players with the given name, and returns a list
       * of all possibly matches.
 diff --git a/src/main/java/org/bukkit/entity/Player.java b/src/main/java/org/bukkit/entity/Player.java
-index 93e18658bb7a83a35f812811c2c87630a4b7eb0b..162a779001f5489c602298361f30f9c069d9b918 100644
+index 35bff85031b1e1b06af7d2bc1c76540d17ae3f3e..67560c7c1bd616cae74f387b8c0047217c71dbd6 100644
 --- a/src/main/java/org/bukkit/entity/Player.java
 +++ b/src/main/java/org/bukkit/entity/Player.java
-@@ -2974,6 +2974,20 @@ public interface Player extends HumanEntity, Conversable, OfflinePlayer, PluginM
+@@ -2972,6 +2972,20 @@ public interface Player extends HumanEntity, Conversable, OfflinePlayer, PluginM
       */
      public boolean hasFlyingFallDamage();
  

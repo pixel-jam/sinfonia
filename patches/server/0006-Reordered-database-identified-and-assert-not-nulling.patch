@@ -5,19 +5,19 @@ Subject: [PATCH] Reordered database identified and assert not nulling
 
 
 diff --git a/src/main/java/net/minecraft/server/level/ServerPlayer.java b/src/main/java/net/minecraft/server/level/ServerPlayer.java
-index f7820c3e04b636c44a56ce78bfe1179f80a408ae..e40879c2de9200880f17dbd2a1b44771405a0577 100644
+index 4b6a262297161aa099d229a5657a322e45968144..1772ed63b42dafa3f9d9ab05f26981d2b039f457 100644
 --- a/src/main/java/net/minecraft/server/level/ServerPlayer.java
 +++ b/src/main/java/net/minecraft/server/level/ServerPlayer.java
-@@ -271,7 +271,7 @@ public class ServerPlayer extends Player {
-     public double lastEntitySpawnRadiusSquared; // Paper - optimise isOutsideRange, this field is in blocks
-     public final com.destroystokyo.paper.util.misc.PooledLinkedHashSets.PooledObjectLinkedOpenHashSet<ServerPlayer> cachedSingleHashSet; // Paper
-     public org.bukkit.event.player.PlayerQuitEvent.QuitReason quitReason = null; // Paper - there are a lot of changes to do if we change all methods leading to the event
+@@ -275,7 +275,7 @@ public class ServerPlayer extends Player {
+     private boolean ramBar = false; // Purpur
+     private boolean tpsBar = false; // Purpur
+     private boolean compassBar = false; // Purpur
 -    private String databaseIdentifier; // Sinfonia
 +    private String databaseIdentifier = ""; // Sinfonia
  
-     public ServerPlayer(MinecraftServer server, ServerLevel world, GameProfile profile, @Nullable ProfilePublicKey publicKey) {
-         super(world, world.getSharedSpawnPos(), world.getSharedSpawnAngle(), profile, publicKey);
-@@ -484,12 +484,6 @@ public class ServerPlayer extends Player {
+     public ServerPlayer(MinecraftServer server, ServerLevel world, GameProfile profile) {
+         super(world, world.getSharedSpawnPos(), world.getSharedSpawnAngle(), profile);
+@@ -499,12 +499,6 @@ public class ServerPlayer extends Player {
              this.recipeBook.fromNbt(nbt.getCompound("recipeBook"), this.server.getRecipeManager());
          }
  
@@ -30,7 +30,7 @@ index f7820c3e04b636c44a56ce78bfe1179f80a408ae..e40879c2de9200880f17dbd2a1b44771
          this.getBukkitEntity().readExtraData(nbt); // CraftBukkit
  
          if (this.isSleeping()) {
-@@ -520,7 +514,10 @@ public class ServerPlayer extends Player {
+@@ -535,7 +529,10 @@ public class ServerPlayer extends Player {
          if (nbt.contains("Purpur.RamBar")) { this.ramBar = nbt.getBoolean("Purpur.RamBar"); } // Purpur
          if (nbt.contains("Purpur.TPSBar")) { this.tpsBar = nbt.getBoolean("Purpur.TPSBar"); } // Purpur
          if (nbt.contains("Purpur.CompassBar")) { this.compassBar = nbt.getBoolean("Purpur.CompassBar"); } // Purpur
