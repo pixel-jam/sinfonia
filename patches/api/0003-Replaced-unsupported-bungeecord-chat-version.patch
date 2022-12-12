@@ -5,13 +5,13 @@ Subject: [PATCH] Replaced unsupported bungeecord chat version
 
 
 diff --git a/build.gradle.kts b/build.gradle.kts
-index 1c1b604198e13b8e955e5413a7ed595370b67329..44c6033b851d757bd7d6641cc68d2398bef68a3e 100644
+index dc134795133ebbde4379bc1c28cfb86d32f929c7..ddfd55f5b25147b2b26be451248ee082b4abefc7 100644
 --- a/build.gradle.kts
 +++ b/build.gradle.kts
 @@ -25,7 +25,7 @@ dependencies {
      // api dependencies are listed transitively to API consumers
-     api("com.google.guava:guava:31.0.1-jre")
-     api("com.google.code.gson:gson:2.8.9")
+     api("com.google.guava:guava:31.1-jre")
+     api("com.google.code.gson:gson:2.10")
 -    api("net.md-5:bungeecord-chat:1.16-R0.4-deprecated+build.6") // Paper
 +    api("net.md-5:bungeecord-chat:1.16-R0.5-SNAPSHOT") // Paper
      api("org.yaml:snakeyaml:1.33")
