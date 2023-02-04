@@ -5,10 +5,10 @@ Subject: [PATCH] Added injection ecosystem
 
 
 diff --git a/build.gradle.kts b/build.gradle.kts
-index 051b2db3548d1b24f591f05eece0c8241475e9bf..dc134795133ebbde4379bc1c28cfb86d32f929c7 100644
+index 5c8dd4d3313a791d1fee00ec5d4bc595b76b7d6d..37a1679356fda3e5708435f4d31cc2211761aad3 100644
 --- a/build.gradle.kts
 +++ b/build.gradle.kts
-@@ -46,6 +46,8 @@ dependencies {
+@@ -47,6 +47,8 @@ dependencies {
      implementation("org.ow2.asm:asm-commons:9.2")
      // Paper end
  
@@ -539,7 +539,7 @@ index 0000000000000000000000000000000000000000..3759e1ccf1de1ce0b0709143f8a243b2
 +
 +}
 diff --git a/src/main/java/org/bukkit/plugin/java/PluginClassLoader.java b/src/main/java/org/bukkit/plugin/java/PluginClassLoader.java
-index cb3c25ef46b279ffdde87f47f729eb8aa7549c1c..90add7eabc2d525cdd0c000794317e2db858bdb3 100644
+index 6fb179c4d420eac3a6399fbff104b5af6ba448ba..350197436ae1fc234b820965e42539dee3d36f37 100644
 --- a/src/main/java/org/bukkit/plugin/java/PluginClassLoader.java
 +++ b/src/main/java/org/bukkit/plugin/java/PluginClassLoader.java
 @@ -20,6 +20,7 @@ import java.util.jar.JarEntry;
@@ -550,7 +550,7 @@ index cb3c25ef46b279ffdde87f47f729eb8aa7549c1c..90add7eabc2d525cdd0c000794317e2d
  import org.bukkit.plugin.InvalidPluginException;
  import org.bukkit.plugin.PluginDescriptionFile;
  import org.bukkit.plugin.SimplePluginManager;
-@@ -73,14 +74,16 @@ public final class PluginClassLoader extends URLClassLoader { // Spigot
+@@ -75,14 +76,16 @@ public final class PluginClassLoader extends URLClassLoader { // Spigot
                  throw new InvalidPluginException("Cannot find main class `" + description.getMain() + "'", ex);
              }
  

@@ -55,7 +55,7 @@ index 0000000000000000000000000000000000000000..f2cbece579e6531c3512de06a887801b
 +}
 \ No newline at end of file
 diff --git a/src/main/java/org/bukkit/craftbukkit/CraftServer.java b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
-index 75d235df307f636cda9fc66fd4797db9e6de18d1..d15209ba6fb4ab4b460eea038041bd84b116d320 100644
+index c89c4b5eaafeed86c63641183ca831db979b00c7..86bb7324aeca5e0385a5c9c0b80568ad0656281c 100644
 --- a/src/main/java/org/bukkit/craftbukkit/CraftServer.java
 +++ b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
 @@ -8,6 +8,9 @@ import com.google.common.collect.Iterators;
@@ -77,7 +77,7 @@ index 75d235df307f636cda9fc66fd4797db9e6de18d1..d15209ba6fb4ab4b460eea038041bd84
      static {
          ConfigurationSerialization.registerClass(CraftOfflinePlayer.class);
          ConfigurationSerialization.registerClass(CraftPlayerProfile.class);
-@@ -481,6 +486,8 @@ public final class CraftServer implements Server {
+@@ -487,6 +492,8 @@ public final class CraftServer implements Server {
              Plugin[] plugins = this.pluginManager.loadPlugins(pluginFolder, extraJars);
              // Purpur end
              // Paper end
