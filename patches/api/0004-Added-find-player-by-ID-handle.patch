@@ -24,3 +24,28 @@ index fc0b33272114c13dff6f5a5795e190fda79c071c..ef4feccc746891e490ca881d6b84b1e6
      /**
       * Attempts to match any players with the given name, and returns a list
       * of all possibly matches.
+diff --git a/src/main/java/org/bukkit/entity/Player.java b/src/main/java/org/bukkit/entity/Player.java
+index 35bff85031b1e1b06af7d2bc1c76540d17ae3f3e..67560c7c1bd616cae74f387b8c0047217c71dbd6 100644
+--- a/src/main/java/org/bukkit/entity/Player.java
++++ b/src/main/java/org/bukkit/entity/Player.java
+@@ -2972,6 +2972,20 @@ public interface Player extends HumanEntity, Conversable, OfflinePlayer, PluginM
+      */
+     public boolean hasFlyingFallDamage();
+ 
++    /**
++     +     * Allows to obtain player custom identifier.
++     +     *
++     +     * @return identifier retrieve
++     +     */
++    public String getPlayerIdentifier(); // Sinfonia - Get player by identifier
++
++    /**
++     * Allows to set player custom identifier.
++     *
++     * @param identifier to set
++     */
++    public void setDatabaseIdentifier(String identifier); // Sinfonia - Get player by identifier
++
+     /**
+      * Creates debug block highlight on specified block location and show it to this player.
+      * <p>

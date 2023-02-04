@@ -5,10 +5,10 @@ Subject: [PATCH] New approach of set player identifier
 
 
 diff --git a/src/main/java/net/minecraft/server/level/ServerPlayer.java b/src/main/java/net/minecraft/server/level/ServerPlayer.java
-index d88e29bea2294074e27ec55dad87beebed8c3428..40946043f547311bfb130da8b378a27494a07ed2 100644
+index 1772ed63b42dafa3f9d9ab05f26981d2b039f457..4d05dec9b67bda0e4beead302de70e1002b50552 100644
 --- a/src/main/java/net/minecraft/server/level/ServerPlayer.java
 +++ b/src/main/java/net/minecraft/server/level/ServerPlayer.java
-@@ -384,6 +384,7 @@ public class ServerPlayer extends Player {
+@@ -386,6 +386,7 @@ public class ServerPlayer extends Player {
      // Sinfonia start - Get by database identifier
      public void setDatabaseIdentifier(String databaseIdentifier) {
          this.databaseIdentifier = databaseIdentifier;
@@ -17,10 +17,10 @@ index d88e29bea2294074e27ec55dad87beebed8c3428..40946043f547311bfb130da8b378a274
  
      // Yes, this doesn't match Vanilla, but it's the best we can do for now.
 diff --git a/src/main/java/net/minecraft/server/players/PlayerList.java b/src/main/java/net/minecraft/server/players/PlayerList.java
-index c2fe4723ec3098c8fb0d184c67bf08837afc80f5..fab17e1324c8e20141811c817fc38fd2d4885e5b 100644
+index 13de9aa830c79000acca0c1bfa97a22fedfce71c..50f86bacace000077cbd7046a0969a1c925d0781 100644
 --- a/src/main/java/net/minecraft/server/players/PlayerList.java
 +++ b/src/main/java/net/minecraft/server/players/PlayerList.java
-@@ -303,12 +303,6 @@ public abstract class PlayerList {
+@@ -365,12 +365,6 @@ public abstract class PlayerList {
          this.playersByName.put(player.getScoreboardName().toLowerCase(java.util.Locale.ROOT), player); // Spigot
          this.playersByUUID.put(player.getUUID(), player);
  
@@ -33,7 +33,7 @@ index c2fe4723ec3098c8fb0d184c67bf08837afc80f5..fab17e1324c8e20141811c817fc38fd2
          // this.broadcastAll(new PacketPlayOutPlayerInfo(PacketPlayOutPlayerInfo.EnumPlayerInfoAction.ADD_PLAYER, new EntityPlayer[]{entityplayer})); // CraftBukkit - replaced with loop below
  
          // Paper start - correctly register player BEFORE PlayerJoinEvent, so the entity is valid and doesn't require tick delay hacks
-@@ -326,9 +320,6 @@ public abstract class PlayerList {
+@@ -388,9 +382,6 @@ public abstract class PlayerList {
          PlayerJoinEvent playerJoinEvent = new PlayerJoinEvent(bukkitPlayer, PaperAdventure.asAdventure(ichatmutablecomponent)); // Paper - Adventure
          this.cserver.getPluginManager().callEvent(playerJoinEvent);
  
@@ -43,7 +43,7 @@ index c2fe4723ec3098c8fb0d184c67bf08837afc80f5..fab17e1324c8e20141811c817fc38fd2
          if (!player.connection.connection.isConnected()) {
              return;
          }
-@@ -644,10 +635,7 @@ public abstract class PlayerList {
+@@ -701,10 +692,7 @@ public abstract class PlayerList {
          ServerPlayer entityplayer1 = (ServerPlayer) this.playersByUUID.get(uuid);
  
          if (entityplayer1 == entityplayer) {
@@ -55,7 +55,7 @@ index c2fe4723ec3098c8fb0d184c67bf08837afc80f5..fab17e1324c8e20141811c817fc38fd2
              this.playersByUUID.remove(uuid);
              // CraftBukkit start
              // this.stats.remove(uuid);
-@@ -1557,6 +1545,13 @@ public abstract class PlayerList {
+@@ -1618,6 +1606,13 @@ public abstract class PlayerList {
          return this.playersByIdentifier.get(id);
      }
  

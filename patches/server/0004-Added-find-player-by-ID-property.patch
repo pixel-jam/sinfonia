@@ -5,10 +5,10 @@ Subject: [PATCH] Added find player by ID property
 
 
 diff --git a/src/main/java/net/minecraft/server/level/ServerPlayer.java b/src/main/java/net/minecraft/server/level/ServerPlayer.java
-index d62bf95fb067c2e2a4fc9b2757c636bd4ee75bea..80286c84003437779a51d077f0f92783cd0b2abf 100644
+index 7f2a811505c2aeaad6e1a91a0719613a6694f77a..4b6a262297161aa099d229a5657a322e45968144 100644
 --- a/src/main/java/net/minecraft/server/level/ServerPlayer.java
 +++ b/src/main/java/net/minecraft/server/level/ServerPlayer.java
-@@ -273,6 +273,7 @@ public class ServerPlayer extends Player {
+@@ -275,6 +275,7 @@ public class ServerPlayer extends Player {
      private boolean ramBar = false; // Purpur
      private boolean tpsBar = false; // Purpur
      private boolean compassBar = false; // Purpur
@@ -16,7 +16,7 @@ index d62bf95fb067c2e2a4fc9b2757c636bd4ee75bea..80286c84003437779a51d077f0f92783
  
      public ServerPlayer(MinecraftServer server, ServerLevel world, GameProfile profile) {
          super(world, world.getSharedSpawnPos(), world.getSharedSpawnAngle(), profile);
-@@ -375,6 +376,16 @@ public class ServerPlayer extends Player {
+@@ -377,6 +378,16 @@ public class ServerPlayer extends Player {
          this.spawnInvulnerableTime = world.purpurConfig.playerSpawnInvulnerableTicks; // Purpur
      }
  
@@ -33,7 +33,7 @@ index d62bf95fb067c2e2a4fc9b2757c636bd4ee75bea..80286c84003437779a51d077f0f92783
      // Yes, this doesn't match Vanilla, but it's the best we can do for now.
      // If this is an issue, PRs are welcome
      public final BlockPos getSpawnPoint(ServerLevel worldserver) {
-@@ -485,6 +496,13 @@ public class ServerPlayer extends Player {
+@@ -487,6 +498,13 @@ public class ServerPlayer extends Player {
          if (nbt.contains("recipeBook", 10)) {
              this.recipeBook.fromNbt(nbt.getCompound("recipeBook"), this.server.getRecipeManager());
          }
@@ -47,7 +47,7 @@ index d62bf95fb067c2e2a4fc9b2757c636bd4ee75bea..80286c84003437779a51d077f0f92783
          this.getBukkitEntity().readExtraData(nbt); // CraftBukkit
  
          if (this.isSleeping()) {
-@@ -515,6 +533,7 @@ public class ServerPlayer extends Player {
+@@ -517,6 +535,7 @@ public class ServerPlayer extends Player {
          if (nbt.contains("Purpur.RamBar")) { this.ramBar = nbt.getBoolean("Purpur.RamBar"); } // Purpur
          if (nbt.contains("Purpur.TPSBar")) { this.tpsBar = nbt.getBoolean("Purpur.TPSBar"); } // Purpur
          if (nbt.contains("Purpur.CompassBar")) { this.compassBar = nbt.getBoolean("Purpur.CompassBar"); } // Purpur
@@ -56,10 +56,10 @@ index d62bf95fb067c2e2a4fc9b2757c636bd4ee75bea..80286c84003437779a51d077f0f92783
  
      @Override
 diff --git a/src/main/java/net/minecraft/server/players/PlayerList.java b/src/main/java/net/minecraft/server/players/PlayerList.java
-index c34c5368e336ba4b181a95932a9b40cb4f50ae1d..2c30e3de35c4da4b9b3ad677cbb8cd0db768e6b1 100644
+index 9cfe4f2ab57f6d17a64eda2c48fb59ab7aa14367..138da3c0f23f42ac09b4f1e7d52a8d661097e840 100644
 --- a/src/main/java/net/minecraft/server/players/PlayerList.java
 +++ b/src/main/java/net/minecraft/server/players/PlayerList.java
-@@ -301,7 +301,14 @@ public abstract class PlayerList {
+@@ -363,7 +363,14 @@ public abstract class PlayerList {
          this.players.add(player);
          this.playersByName.put(player.getScoreboardName().toLowerCase(java.util.Locale.ROOT), player); // Spigot
          this.playersByUUID.put(player.getUUID(), player);
@@ -75,7 +75,7 @@ index c34c5368e336ba4b181a95932a9b40cb4f50ae1d..2c30e3de35c4da4b9b3ad677cbb8cd0d
  
          // Paper start - correctly register player BEFORE PlayerJoinEvent, so the entity is valid and doesn't require tick delay hacks
          player.supressTrackerForLogin = true;
-@@ -318,6 +325,9 @@ public abstract class PlayerList {
+@@ -380,6 +387,9 @@ public abstract class PlayerList {
          PlayerJoinEvent playerJoinEvent = new PlayerJoinEvent(bukkitPlayer, PaperAdventure.asAdventure(ichatmutablecomponent)); // Paper - Adventure
          this.cserver.getPluginManager().callEvent(playerJoinEvent);
  
@@ -85,7 +85,7 @@ index c34c5368e336ba4b181a95932a9b40cb4f50ae1d..2c30e3de35c4da4b9b3ad677cbb8cd0d
          if (!player.connection.connection.isConnected()) {
              return;
          }
-@@ -633,6 +643,10 @@ public abstract class PlayerList {
+@@ -690,6 +700,10 @@ public abstract class PlayerList {
          ServerPlayer entityplayer1 = (ServerPlayer) this.playersByUUID.get(uuid);
  
          if (entityplayer1 == entityplayer) {
@@ -96,7 +96,7 @@ index c34c5368e336ba4b181a95932a9b40cb4f50ae1d..2c30e3de35c4da4b9b3ad677cbb8cd0d
              this.playersByUUID.remove(uuid);
              // CraftBukkit start
              // this.stats.remove(uuid);
-@@ -1537,6 +1551,11 @@ public abstract class PlayerList {
+@@ -1598,6 +1612,11 @@ public abstract class PlayerList {
          return (ServerPlayer) this.playersByUUID.get(uuid);
      }
  
@@ -109,7 +109,7 @@ index c34c5368e336ba4b181a95932a9b40cb4f50ae1d..2c30e3de35c4da4b9b3ad677cbb8cd0d
          return false;
      }
 diff --git a/src/main/java/org/bukkit/craftbukkit/CraftServer.java b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
-index 86bb7324aeca5e0385a5c9c0b80568ad0656281c..93b481b0bd9dd533e113349cef8e57c1cae8ae02 100644
+index d15209ba6fb4ab4b460eea038041bd84b116d320..340a413fcddc01ee6ad8e56a6124ece53140535f 100644
 --- a/src/main/java/org/bukkit/craftbukkit/CraftServer.java
 +++ b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
 @@ -407,6 +407,14 @@ public final class CraftServer implements Server {
@@ -128,11 +128,11 @@ index 86bb7324aeca5e0385a5c9c0b80568ad0656281c..93b481b0bd9dd533e113349cef8e57c1
          return this.overrideAllCommandBlockCommands || this.commandsConfiguration.getStringList("command-block-overrides").contains(command);
      }
 diff --git a/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java b/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
-index 5a76c967e2d9c9c1b09e8de33fcde34e25b4646b..9f6c5d616e5c3920123f370ca66c6f4b9292c4f0 100644
+index 82697576db752e3dad908e389035ec66c728f0ec..43d294983f7794e88eac4b5a14b938b1fdf14f52 100644
 --- a/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
 +++ b/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
-@@ -3097,6 +3097,18 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
-         getHandle().spawnInvulnerableTime = spawnInvulnerableTime;
+@@ -3082,6 +3082,18 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
+         return getHandle().flyingFallDamage;
      }
  
 +    // Sinfonia start - Get player by Identifier
